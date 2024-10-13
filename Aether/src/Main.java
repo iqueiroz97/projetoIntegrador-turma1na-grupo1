@@ -1,28 +1,23 @@
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
 
-        String playerName = "Igor";
-
+        Scanner entradaJogador = new Scanner(System.in);
         Utils utils = new Utils();
 
-        utils.Banner1();
-        utils.TerrorNoEspacoMorse();
-        System.out.println("\n");
+        int opcaoSelecionada;
 
-        utils.Banner2();
-        utils.TerrorNoEspacoMorse();
-        System.out.println("\n");
+        utils.banner();
+        utils.terrorNoEspacoMorse();
+        System.out.println();
 
-        utils.Banner3();
-        utils.TerrorNoEspacoMorse();
-        System.out.println("\n");
 
-        utils.Banner4();
-        utils.TerrorNoEspacoMorse();
-        System.out.println("\n");
 
-        utils.ShowMenu();
+        do {
+            utils.mostraMenu();
 
-        System.out.println(playerName + " joga o dado. O resultado é: " + utils.ThrowsDice());
+            opcaoSelecionada = entradaJogador.nextInt();
+        } while (opcaoSelecionada != 4);
     }
 }

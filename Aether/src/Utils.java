@@ -2,75 +2,69 @@ import java.util.Random;
 
 public class Utils {
 
-    public int ThrowsDice() {
+    public int jogaDado() {
 
-        int selectecSide;
+        int selecionaLado;
 
-        Random throwsDice = new Random();
-        selectecSide = throwsDice.nextInt(1, 7);
+        Random jogaDado = new Random();
+        selecionaLado = jogaDado.nextInt(1, 7);
 
-        return selectecSide;
+        return selecionaLado;
     }
 
-    //        Alternativas
+
 //    TODO: Implementar o restante da lógica
-    public void ShowMenu() {
+    public void mostraMenu() {
         System.out.println("""
-                     MENU\n
+                    MENU
+              Selecione uma opção\n
                 1 - Instruções\r
                 2 - Jogar\r
                 3 - Créditos\r
                 4 - Sair
+               \s""");
+    }
+
+    public void opcoes(int opcaoSelecionada) {
+        switch (opcaoSelecionada) {
+            case 1 -> instrucoes();
+            case 2 -> jogar();
+            case 3 -> creditos();
+            case 4 -> sair();
+            default -> System.out.println("Opção inválida. Tente novamente");
+        }
+    }
+
+//    TODO: Pensar nas instruções do jogo
+    public void instrucoes() {
+        System.out.print("Para jogar este jogo você deve...");
+    }
+
+//    TODO: Elaborar inicialização do jogo
+    public void jogar() {
+        System.out.println("Iniciar jogo");
+    }
+
+//    TODO: Pensar melhor nos créditos
+    public void creditos() {
+        System.out.println("""
+                AUTORES DO JOGO
+                
+                Breno Rios
+                Igor Queiroz
+                Lucas Serafim
+                Rafael Batista
                 """);
     }
 
-    public void TerrorNoEspacoMorse() {
-        System.out.println("""
-                - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---\s""");
+//    TODO: Elaborar lógica de encerramento
+    public void sair() {
+        System.out.println("Encerrar o jogo");
     }
 
     //        https://manytools.org/hacker-tools/ascii-banner/
-    //    Banner3-D
-    public void Banner1() {
-        System.out.println("""
-                ::::::::::::::::::'###::::'########:'########:'##::::'##:'########:'########:::::::::::::::::
-                :::::::::::::::::'## ##::: ##.....::... ##..:: ##:::: ##: ##.....:: ##.... ##::::::::::::::::
-                ::::::::::::::::'##:. ##:: ##:::::::::: ##:::: ##:::: ##: ##::::::: ##:::: ##::::::::::::::::
-                :::::::::::::::'##:::. ##: ######:::::: ##:::: #########: ######::: ########:::::::::::::::::
-                ::::::::::::::: #########: ##...::::::: ##:::: ##.... ##: ##...:::: ##.. ##::::::::::::::::::
-                ::::::::::::::: ##.... ##: ##:::::::::: ##:::: ##:::: ##: ##::::::: ##::. ##:::::::::::::::::
-                ::::::::::::::: ##:::: ##: ########:::: ##:::: ##:::: ##: ########: ##:::. ##::::::::::::::::
-                :::::::::::::::..:::::..::........:::::..:::::..:::::..::........::..:::::..:::::::::::::::::""");
-    }
-
-    //    AMC Slash
-    public void Banner2() {
-        System.out.println("""
-                .s5SSSs.  .s5SSSs.  .s5SSSSs. .s    s.  .s5SSSs.  .s5SSSs.                     \s
-                      SS.       SS.    SSS          SS.       SS.       SS.                    \s
-                sS    S%S sS    `:;    S%S    sS    S%S sS    `:; sS    S%S                    \s
-                SS    S%S SS           S%S    SS    S%S SS        SS    S%S                    \s
-                SSSs. S%S SSSs.        S%S    SSSs. S%S SSSs.     SS .sS;:'                    \s
-                SS    S%S SS           S%S    SS    S%S SS        SS    ;,                     \s
-                SS    `:; SS           `:;    SS    `:; SS        SS    `:;                    \s
-                SS    ;,. SS    ;,.    ;,.    SS    ;,. SS    ;,. SS    ;,.                    \s
-                :;    ;:' `:;;;;;:'    ;:'    :;    ;:' `:;;;;;:' `:    ;:'                    \s
-                                                                                               \s""");
-    }
-
-    //   S Blood
-    public void Banner3() {
-        System.out.println("""
-                 @@@@@@  @@@@@@@@ @@@@@@@ @@@  @@@ @@@@@@@@ @@@@@@@                         \s
-                @@!  @@@ @@!        @@!   @@!  @@@ @@!      @@!  @@@                        \s
-                @!@!@!@! @!!!:!     @!!   @!@!@!@! @!!!:!   @!@!!@!                         \s
-                !!:  !!! !!:        !!:   !!:  !!! !!:      !!: :!!                         \s
-                 :   : : : :: :::    :     :   : : : :: :::  :   : :                        \s
-                                                                                            \s""");
-    }
-
     //    Alligator2
-    public void Banner4() {
+    public void banner() {
         System.out.println("""
                     :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::                          \s
                   :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:                         \s
@@ -81,8 +75,13 @@ public class Utils {
                 ###     ### ##########     ###     ###    ### ########## ###    ###                         \s""");
     }
 
+    public void terrorNoEspacoMorse() {
+        System.out.println("""
+                - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---""");
+    }
+
     //    Image
-    public void Image() {
+    public void imagem() {
         System.out.println("......................................................,,................,,,.............................................................................................................................\n" +
                 ".............................*........................,.................................,..,,,,,,,,...........,........,.....................................................,..*.......................\n" +
                 "..................................................,,................,..........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,...............*#%........................................................\n" +
