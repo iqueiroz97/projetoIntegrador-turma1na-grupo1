@@ -66,13 +66,20 @@ public class Utils {
         interacao.nextLine();
     }
 
-    //    Menu do jogo
     //    TODO: Implementar o restante da lógica
     public void mostraMenu() {
 
         System.out.println("""
-                    MENU
-                     \s
+                ::::    ::::  :::::::::: ::::    ::: :::    :::\s
+                +:+:+: :+:+:+ :+:        :+:+:   :+: :+:    :+:\s
+                +:+ +:+:+ +:+ +:+        :+:+:+  +:+ +:+    +:+\s
+                +#+  +:+  +#+ +#++:++#   +#+ +:+ +#+ +#+    +:+\s
+                +#+       +#+ +#+        +#+  +#+#+# +#+    +#+\s
+                #+#       #+# #+#        #+#   #+#+# #+#    #+#\s
+                ###       ### ########## ###    ####  ######## \s
+                """);
+
+        System.out.println("""
                 1 - Instruções\r
                 2 - Jogar\r
                 3 - Créditos\r
@@ -93,6 +100,17 @@ public class Utils {
     //    TODO: Pensar nas instruções do jogo
     public void instrucoes() {
 
+        System.out.print("""
+                
+                ::::::::::: ::::    :::  :::::::: ::::::::::: :::::::::  :::    :::  ::::::::   ::::::::  :::::::::: :::::::: \s
+                    :+:     :+:+:   :+: :+:    :+:    :+:     :+:    :+: :+:    :+: :+:    :+: :+:    :+: :+:       :+:    :+:\s
+                    +:+     :+:+:+  +:+ +:+           +:+     +:+    +:+ +:+    +:+ +:+        +:+    +:+ +:+       +:+       \s
+                    +#+     +#+ +:+ +#+ +#++:++#++    +#+     +#++:++#:  +#+    +:+ +#+        +#+    +:+ +#++:++#  +#++:++#++\s
+                    +#+     +#+  +#+#+#        +#+    +#+     +#+    +#+ +#+    +#+ +#+        +#+    +#+ +#+              +#+\s
+                    #+#     #+#   #+#+# #+#    #+#    #+#     #+#    #+# #+#    #+# #+#    #+# #+#    #+# #+#       #+#    #+#\s
+                ########### ###    ####  ########     ###     ###    ###  ########   ########   ########  ########## ######## \s
+                """);
+
         System.out.println("\nPara jogar este jogo você deve...");
         retornar();
     }
@@ -107,14 +125,19 @@ public class Utils {
     //    TODO: Pensar melhor nos créditos
     public void creditos() {
 
+        System.out.print("""
+                
+                    :::     :::    ::: ::::::::::: ::::::::  :::::::::  :::::::::: :::::::: \s
+                  :+: :+:   :+:    :+:     :+:    :+:    :+: :+:    :+: :+:       :+:    :+:\s
+                 +:+   +:+  +:+    +:+     +:+    +:+    +:+ +:+    +:+ +:+       +:+       \s
+                +#++:++#++: +#+    +:+     +#+    +#+    +:+ +#++:++#:  +#++:++#  +#++:++#++\s
+                +#+     +#+ +#+    +#+     +#+    +#+    +#+ +#+    +#+ +#+              +#+\s
+                #+#     #+# #+#    #+#     #+#    #+#    #+# #+#    #+# #+#       #+#    #+#\s
+                ###     ###  ########      ###     ########  ###    ### ########## ######## \s
+                """);
+
         System.out.println("""
                 
-                AUTORES DO JOGO\r
-                
-                ROTEIRO:\r
-                Igor Queiroz\r
-                
-                DESENVOLVIMENTO:\r
                 Breno Rios\r
                 Igor Queiroz\r
                 Lucas Serafim\r
@@ -125,7 +148,16 @@ public class Utils {
     //    TODO: Elaborar lógica de encerramento
     public void sair() {
 
-        System.out.println("\nEncerrando jogo...");
+        System.out.print("""
+                
+                :::::::::: ::::::::::: ::::    :::\s
+                :+:            :+:     :+:+:   :+:\s
+                +:+            +:+     :+:+:+  +:+\s
+                :#::+::#       +#+     +#+ +:+ +#+\s
+                +#+            +#+     +#+  +#+#+#\s
+                #+#            #+#     #+#   #+#+#\s
+                ###        ########### ###    ####\s
+                """);
     }
 
     //    ALEATORIEDADE
