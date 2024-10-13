@@ -3,8 +3,26 @@ public class Main {
 
         String playerName = "Igor";
 
-        Utils dice = new Utils();
+        Utils utils = new Utils();
 
-        System.out.println(playerName + " joga o dado. O resultado é: " + dice.ThrowsDice());
+        utils.Banner1();
+        utils.TerrorNoEspacoMorse();
+        System.out.println("\n");
+
+        utils.Banner2();
+        utils.TerrorNoEspacoMorse();
+        System.out.println("\n");
+
+        utils.Banner3();
+        utils.TerrorNoEspacoMorse();
+        System.out.println("\n");
+
+        utils.Banner4();
+        utils.TerrorNoEspacoMorse();
+        System.out.println("\n");
+
+        utils.ShowMenu();
+
+        System.out.println(playerName + " joga o dado. O resultado é: " + utils.ThrowsDice());
     }
 }
