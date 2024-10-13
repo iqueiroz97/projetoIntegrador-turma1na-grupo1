@@ -3,21 +3,23 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        Scanner entradaJogador = new Scanner(System.in);
         Utils utils = new Utils();
+        Scanner entradaJogador = new Scanner(System.in);
 
         int opcaoSelecionada;
 
         utils.banner();
-        utils.terrorNoEspacoMorse();
-        System.out.println();
-
-
 
         do {
+
             utils.mostraMenu();
 
+            System.out.print("\nSelecione uma opção: ");
             opcaoSelecionada = entradaJogador.nextInt();
+
+            utils.opcoesMenu(opcaoSelecionada);
         } while (opcaoSelecionada != 4);
+
+        entradaJogador.close();
     }
 }
