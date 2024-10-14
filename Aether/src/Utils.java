@@ -1,10 +1,15 @@
-import java.util.Random;
-import java.util.Scanner;
+import java.security.PublicKey;
+import java.util.*;
 
 public class Utils {
 
-    Random aleatorio = new Random();
     Scanner interacao = new Scanner(System.in);
+
+    //    QUESTÕES / ALTERNATIVAS
+    String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
+
+    String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
+    int contadorRespostaCorreta, contadorRespostaIncorreta;
 
     //    MENU
     //    O código morse abaixo do banner diz "Terror no Espaço"
@@ -42,7 +47,7 @@ public class Utils {
         This is the STRAIGHT version of the revised Alligator font I edited.
         It's EXACTLY like my other posted font except the tilt was taken out.
     */
-    public void banner2() {
+    public void bannerAlternativo() {
 
         System.out.print("""
                     :::     :::::::::: ::::::::::: :::    ::: :::::::::: ::::::::: \s
@@ -54,8 +59,6 @@ public class Utils {
                 ###     ### ##########     ###     ###    ### ########## ###    ###\s
                                                                                    \s
                       - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---      \s
-                                                                                   \s
-                                  PRESSIONE <ENTER> PARA INICIAR                   \s
                 """);
 
         interacao.nextLine();
@@ -119,6 +122,28 @@ public class Utils {
     public void jogar() {
 
         System.out.println("\nIniciar jogo");
+
+        //    Teste de pergunta
+        mostraPergunta(pergunta1());
+
+        System.out.print("\nResposta: ");
+        String respostaJogador = interacao.next();
+
+        if (checaResposta(pergunta1(), respostaJogador)) {
+
+            contadorRespostaCorreta += 1;
+
+            System.out.println("RESPOSTA CORRETA!");
+            System.out.println("Resposta incorreta: " + contadorRespostaCorreta);
+        } else {
+
+            contadorRespostaIncorreta += 1;
+
+            System.out.println("RESPOSTA INCORRETA!");
+            System.out.println("Resposta incorreta: " + contadorRespostaIncorreta);
+        }
+
+        interacao.nextLine();
         retornar();
     }
 
@@ -145,7 +170,6 @@ public class Utils {
         retornar();
     }
 
-    //    TODO: Elaborar lógica de encerramento
     public void sair() {
 
         System.out.print("""
@@ -161,10 +185,70 @@ public class Utils {
     }
 
     //    ALEATORIEDADE
-    public int jogaDado() {
+    public void embaralha(ArrayList<String> item) {
 
-        int selecionaLado;
-        selecionaLado = aleatorio.nextInt(1, 7);
-        return selecionaLado;
+        Collections.shuffle(item);
+    }
+
+    //    VALIDAÇÃO
+    //    TODO: Revisar lógica
+    public boolean checaResposta(ArrayList<String> pergunta, String respostaJogador) {
+
+        int posicaoResposta = switch (respostaJogador.toLowerCase()) {
+            case "a" -> 0;
+            case "b" -> 1;
+            case "c" -> 2;
+            case "d" -> 3;
+            case "e" -> 4;
+            default -> -1;
+        };
+
+        int posicaoAlternativaCorreta = pergunta.indexOf(alternativaCorreta);
+
+        return posicaoResposta == posicaoAlternativaCorreta;
+    }
+
+    //    QUESTÕES
+    public void mostraPergunta(ArrayList<String> pergunta) {
+
+        embaralha(pergunta);
+
+        for (int i = 0; i < pergunta.size(); i++) {
+
+            System.out.println(opcoes[i] + pergunta.get(i));
+        }
+    }
+
+    //    TODO: Revisar lógica
+    public ArrayList<String> pergunta1() {
+
+        ArrayList<String> alternativas = new ArrayList<>();
+
+        /*Qual é o tipo de relacionamento onde uma entidade pode estar
+        associada a várias outras, mas essas estão associadas a apenas
+        uma entidade?*/
+
+        String enunciado = """
+                
+                Qual é o tipo de relacionamento onde uma entidade pode estar
+                associada a várias outras, mas essas estão associadas a apenas
+                uma entidade?
+                """;
+
+        System.out.println(enunciado);
+
+        this.alternativa1 = "Relacionamento Um-para-Um (1:1)";
+        this.alternativa2 = "Relacionamento Hierárquico";
+        this.alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
+        this.alternativa4 = "Relacionamento Circular";
+        this.alternativaCorreta = "Relacionamento Um-para-Muitos (1:N)";
+
+        alternativas.add(this.alternativa1);
+        alternativas.add(this.alternativa2);
+        alternativas.add(this.alternativa3);
+        alternativas.add(this.alternativa4);
+        alternativas.add(this.alternativaCorreta);
+
+        return alternativas;
     }
 }
