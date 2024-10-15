@@ -1,21 +1,34 @@
 import java.util.*;
 
 public class Utils {
-
     Scanner interacao = new Scanner(System.in);
 
     //    QUESTÕES / ALTERNATIVAS
     String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
 
     String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
-    int contadorRespostaCorreta, contadorRespostaIncorreta, posicaoAlternativaCorreta;
+    int contadorRespostaCorreta;
+    int contadorRespostaIncorreta;
+    int posicaoAlternativaCorreta;
+    int opcaoSelecionada;
+    int encerraGame;
 
-    String enunciadoPergunta1 = """
-            
-            Qual é o tipo de relacionamento onde uma entidade pode estar
-            associada a várias outras, mas essas estão associadas a apenas
-            uma entidade?
-            """;
+    public int getOpcaoSelecionada() {
+        return opcaoSelecionada;
+    }
+
+    public void setOpcaoSelecionada(int opcaoSelecionada) {
+        this.opcaoSelecionada = opcaoSelecionada;
+    }
+
+    public int getEncerraGame() {
+        return encerraGame;
+    }
+
+    public void setEncerraGame(int encerraGame) {
+        this.encerraGame = encerraGame;
+    }
+
 
     //    MENU
     //    O código morse abaixo do banner diz "Terror no Espaço"
@@ -28,8 +41,8 @@ public class Utils {
         17th June, 1994
     */
     public void banner() {
-
         System.out.print("""
+                
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
                        :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:\s
                      +:+   +:+  +:+            +:+     +:+    +:+ +:+        +:+    +:+ \s
@@ -40,8 +53,7 @@ public class Utils {
                                                                                         \s
                         - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---         \s
                                                                                         \s
-                                  PRESSIONE <ENTER> PARA INICIAR                        \s
-                """);
+                                  PRESSIONE <ENTER> PARA INICIAR""");
 
         interacao.nextLine();
     }
@@ -54,8 +66,8 @@ public class Utils {
         It's EXACTLY like my other posted font except the tilt was taken out.
     */
     public void bannerAlternativo() {
-
         System.out.print("""
+                
                     :::     :::::::::: ::::::::::: :::    ::: :::::::::: ::::::::: \s
                   :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:\s
                  +:+   +:+  +:+            +:+     +:+    +:+ +:+        +:+    +:+\s
@@ -64,8 +76,7 @@ public class Utils {
                 #+#     #+# #+#            #+#     #+#    #+# #+#        #+#    #+#\s
                 ###     ### ##########     ###     ###    ### ########## ###    ###\s
                                                                                    \s
-                      - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---      \s
-                """);
+                      - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---      \s""");
 
         interacao.nextLine();
     }
@@ -75,10 +86,32 @@ public class Utils {
         interacao.nextLine();
     }
 
+    public void prosseguir() {
+        System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
+        interacao.nextLine();
+    }
+
+    public boolean confirmar() {
+        System.out.print("""
+                
+                DESEJA CONFIRMAR A AÇÃO?\s
+                   (<S>IM)  (<N>ÃO)     \s
+                
+                Resposta:\s""");
+
+        String confirmarAcao = interacao.next();
+
+        return switch (confirmarAcao.toLowerCase()) {
+            case "s" -> true;
+            case "n" -> false;
+            default -> throw new IllegalStateException("\nOPÇÃO INVÁLIDA");
+        };
+    }
+
     //    TODO: Implementar o restante da lógica
     public void mostraMenu() {
-
         System.out.println("""
+                
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
                 +:+:+: :+:+:+ :+:        :+:+:   :+: :+:    :+:\s
                 +:+ +:+:+ +:+ +:+        :+:+:+  +:+ +:+    +:+\s
@@ -97,7 +130,6 @@ public class Utils {
     }
 
     public void opcoesMenu(int opcaoSelecionada) {
-
         switch (opcaoSelecionada) {
             case 1 -> instrucoes();
             case 2 -> jogar();
@@ -110,7 +142,6 @@ public class Utils {
 
     //    TODO: Pensar nas instruções do jogo
     public void instrucoes() {
-
         System.out.print("""
                 
                 ::::::::::: ::::    :::  :::::::: ::::::::::: :::::::::  :::    :::  ::::::::   ::::::::  :::::::::: :::::::: \s
@@ -128,7 +159,6 @@ public class Utils {
 
     //    TODO: Elaborar inicialização do jogo
     public void jogar() {
-
         System.out.println("\nIniciar jogo");
 
         //    Teste de pergunta
@@ -157,7 +187,6 @@ public class Utils {
 
     //    TODO: Pensar melhor nos créditos
     public void creditos() {
-
         System.out.print("""
                 
                     :::     :::    ::: ::::::::::: ::::::::  :::::::::  :::::::::: :::::::: \s
@@ -179,7 +208,6 @@ public class Utils {
     }
 
     public void estatisticas() {
-
         System.out.print("""
                 
                 :::::::::: :::::::: ::::::::::: ::: ::::::::::: ::::::::::: :::::::: ::::::::::: ::::::::::: ::::::::      :::      :::::::: \s
@@ -197,22 +225,25 @@ public class Utils {
     }
 
     public void sair() {
+        if (!confirmar()) {
+        } else {
+            setEncerraGame(5);
 
-        System.out.print("""
-                
-                :::::::::: ::::::::::: ::::    :::\s
-                :+:            :+:     :+:+:   :+:\s
-                +:+            +:+     :+:+:+  +:+\s
-                :#::+::#       +#+     +#+ +:+ +#+\s
-                +#+            +#+     +#+  +#+#+#\s
-                #+#            #+#     #+#   #+#+#\s
-                ###        ########### ###    ####\s
-                """);
+            System.out.print("""
+                    
+                    :::::::::: ::::::::::: ::::    :::\s
+                    :+:            :+:     :+:+:   :+:\s
+                    +:+            +:+     :+:+:+  +:+\s
+                    :#::+::#       +#+     +#+ +:+ +#+\s
+                    +#+            +#+     +#+  +#+#+#\s
+                    #+#            #+#     #+#   #+#+#\s
+                    ###        ########### ###    ####\s
+                    """);
+        }
     }
 
     //    ALEATORIEDADE
     public ArrayList<String> embaralha(ArrayList<String> item) {
-
         Collections.shuffle(item);
         return item;
     }
@@ -220,7 +251,6 @@ public class Utils {
     //    VALIDAÇÃO
     //    TODO: Revisar lógica
     public boolean checaResposta(String respostaJogador) {
-
         int posicaoResposta = switch (respostaJogador.toLowerCase()) {
             case "a" -> 0;
             case "b" -> 1;
@@ -235,7 +265,6 @@ public class Utils {
 
     //    QUESTÕES
     public void mostraPergunta(ArrayList<String> pergunta) {
-
         for (int i = 0; i < pergunta.size(); i++) {
 
             System.out.println(opcoes[i] + pergunta.get(i));
@@ -246,12 +275,18 @@ public class Utils {
 
     //    TODO: Revisar lógica
     public ArrayList<String> pergunta1() {
-
         ArrayList<String> alternativas = new ArrayList<>();
 
         /*Qual é o tipo de relacionamento onde uma entidade pode estar
         associada a várias outras, mas essas estão associadas a apenas
         uma entidade?*/
+
+        String enunciadoPergunta1 = """
+                
+                Qual é o tipo de relacionamento onde uma entidade pode estar
+                associada a várias outras, mas essas estão associadas a apenas
+                uma entidade?
+                """;
 
         System.out.println(enunciadoPergunta1);
 
