@@ -3,15 +3,14 @@ import java.util.*;
 public class Utils {
     Scanner interacao = new Scanner(System.in);
 
-    //    QUESTÕES / ALTERNATIVAS
-    String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
-
+    //    VARIÁVEIS
+    private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
     String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
-    int contadorRespostaCorreta;
-    int contadorRespostaIncorreta;
-    int posicaoAlternativaCorreta;
-    int opcaoSelecionada;
-    int encerraGame;
+    private int contadorRespostaCorreta;
+    private int contadorRespostaIncorreta;
+    private int posicaoAlternativaCorreta;
+    private int opcaoSelecionada;
+    private int encerraGame;
 
     public int getOpcaoSelecionada() {
         return opcaoSelecionada;
@@ -101,6 +100,7 @@ public class Utils {
 
         String confirmarAcao = interacao.next();
 
+        //    TODO: Bug ao selecionar a opção "n" na confirmação. Analisar para entender melhor
         return switch (confirmarAcao.toLowerCase()) {
             case "s" -> true;
             case "n" -> false;
@@ -226,6 +226,7 @@ public class Utils {
 
     public void sair() {
         if (!confirmar()) {
+            //  Elaborar melhor o que fazer
         } else {
             setEncerraGame(5);
 

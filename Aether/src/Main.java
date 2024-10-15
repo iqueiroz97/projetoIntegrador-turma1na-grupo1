@@ -11,7 +11,7 @@ public class Main {
             utils.mostraMenu();
 
             System.out.print("\nSelecione uma opção: ");
-            utils.opcaoSelecionada = entradaJogador.nextInt();
+            utils.setOpcaoSelecionada(entradaJogador.nextInt());
 
             utils.opcoesMenu(utils.getOpcaoSelecionada());
         } while (utils.getOpcaoSelecionada() != utils.getEncerraGame());
