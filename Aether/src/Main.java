@@ -3,6 +3,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
+        int ENCERRA_GAME = 5;
+
         Utils utils = new Utils();
         Scanner entradaJogador = new Scanner(System.in);
 
@@ -18,7 +20,7 @@ public class Main {
             opcaoSelecionada = entradaJogador.nextInt();
 
             utils.opcoesMenu(opcaoSelecionada);
-        } while (opcaoSelecionada != 4);
+        } while (opcaoSelecionada != ENCERRA_GAME);
 
         entradaJogador.close();
     }

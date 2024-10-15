@@ -1,4 +1,3 @@
-import java.security.PublicKey;
 import java.util.*;
 
 public class Utils {
@@ -9,7 +8,14 @@ public class Utils {
     String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
 
     String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
-    int contadorRespostaCorreta, contadorRespostaIncorreta;
+    int contadorRespostaCorreta, contadorRespostaIncorreta, posicaoAlternativaCorreta;
+
+    String enunciadoPergunta1 = """
+            
+            Qual é o tipo de relacionamento onde uma entidade pode estar
+            associada a várias outras, mas essas estão associadas a apenas
+            uma entidade?
+            """;
 
     //    MENU
     //    O código morse abaixo do banner diz "Terror no Espaço"
@@ -65,7 +71,7 @@ public class Utils {
     }
 
     public void retornar() {
-        System.out.println("\nPRESSIONE <ENTER> PARA RETORNAR");
+        System.out.print("\nPRESSIONE <ENTER> PARA RETORNAR");
         interacao.nextLine();
     }
 
@@ -86,7 +92,8 @@ public class Utils {
                 1 - Instruções\r
                 2 - Jogar\r
                 3 - Créditos\r
-                4 - Sair""");
+                4 - Estatísticas\r
+                5 - Sair""");
     }
 
     public void opcoesMenu(int opcaoSelecionada) {
@@ -95,7 +102,8 @@ public class Utils {
             case 1 -> instrucoes();
             case 2 -> jogar();
             case 3 -> creditos();
-            case 4 -> sair();
+            case 4 -> estatisticas();
+            case 5 -> sair();
             default -> System.out.println("\nOPÇÃO INVÁLIDA\n");
         }
     }
@@ -124,24 +132,24 @@ public class Utils {
         System.out.println("\nIniciar jogo");
 
         //    Teste de pergunta
-        mostraPergunta(pergunta1());
+        String respostaJogador;
 
-        System.out.print("\nResposta: ");
-        String respostaJogador = interacao.next();
+        do {
+            mostraPergunta(pergunta1());
 
-        if (checaResposta(pergunta1(), respostaJogador)) {
+            System.out.print("\nResposta: ");
+            respostaJogador = interacao.next();
 
-            contadorRespostaCorreta += 1;
+            if (checaResposta(respostaJogador)) {
 
-            System.out.println("RESPOSTA CORRETA!");
-            System.out.println("Resposta incorreta: " + contadorRespostaCorreta);
-        } else {
+                contadorRespostaCorreta += 1;
+                System.out.println("\nRESPOSTA CORRETA!");
+            } else {
 
-            contadorRespostaIncorreta += 1;
-
-            System.out.println("RESPOSTA INCORRETA!");
-            System.out.println("Resposta incorreta: " + contadorRespostaIncorreta);
-        }
+                contadorRespostaIncorreta += 1;
+                System.out.println("\nRESPOSTA INCORRETA! TENTE NOVAMENTE");
+            }
+        } while (!checaResposta(respostaJogador));
 
         interacao.nextLine();
         retornar();
@@ -170,6 +178,24 @@ public class Utils {
         retornar();
     }
 
+    public void estatisticas() {
+
+        System.out.print("""
+                
+                :::::::::: :::::::: ::::::::::: ::: ::::::::::: ::::::::::: :::::::: ::::::::::: ::::::::::: ::::::::      :::      :::::::: \s
+                :+:       :+:    :+:    :+:   :+: :+:   :+:         :+:    :+:    :+:    :+:         :+:    :+:    :+:   :+: :+:   :+:    :+:\s
+                +:+       +:+           +:+  +:+   +:+  +:+         +:+    +:+           +:+         +:+    +:+         +:+   +:+  +:+       \s
+                +#++:++#  +#++:++#++    +#+ +#++:++#++: +#+         +#+    +#++:++#++    +#+         +#+    +#+        +#++:++#++: +#++:++#++\s
+                +#+              +#+    +#+ +#+     +#+ +#+         +#+           +#+    +#+         +#+    +#+        +#+     +#+        +#+\s
+                #+#       #+#    #+#    #+# #+#     #+# #+#         #+#    #+#    #+#    #+#         #+#    #+#    #+# #+#     #+# #+#    #+#\s
+                ########## ########     ### ###     ### ###     ########### ########     ###     ########### ########  ###     ###  ######## \s
+                """);
+
+        System.out.println("\nRespostas corretas: " + contadorRespostaCorreta);
+        System.out.println("Respostas incorretas: " + contadorRespostaIncorreta);
+        retornar();
+    }
+
     public void sair() {
 
         System.out.print("""
@@ -185,14 +211,15 @@ public class Utils {
     }
 
     //    ALEATORIEDADE
-    public void embaralha(ArrayList<String> item) {
+    public ArrayList<String> embaralha(ArrayList<String> item) {
 
         Collections.shuffle(item);
+        return item;
     }
 
     //    VALIDAÇÃO
     //    TODO: Revisar lógica
-    public boolean checaResposta(ArrayList<String> pergunta, String respostaJogador) {
+    public boolean checaResposta(String respostaJogador) {
 
         int posicaoResposta = switch (respostaJogador.toLowerCase()) {
             case "a" -> 0;
@@ -203,20 +230,18 @@ public class Utils {
             default -> -1;
         };
 
-        int posicaoAlternativaCorreta = pergunta.indexOf(alternativaCorreta);
-
         return posicaoResposta == posicaoAlternativaCorreta;
     }
 
     //    QUESTÕES
     public void mostraPergunta(ArrayList<String> pergunta) {
 
-        embaralha(pergunta);
-
         for (int i = 0; i < pergunta.size(); i++) {
 
             System.out.println(opcoes[i] + pergunta.get(i));
         }
+
+        posicaoAlternativaCorreta = pergunta.indexOf(this.alternativaCorreta);
     }
 
     //    TODO: Revisar lógica
@@ -228,14 +253,7 @@ public class Utils {
         associada a várias outras, mas essas estão associadas a apenas
         uma entidade?*/
 
-        String enunciado = """
-                
-                Qual é o tipo de relacionamento onde uma entidade pode estar
-                associada a várias outras, mas essas estão associadas a apenas
-                uma entidade?
-                """;
-
-        System.out.println(enunciado);
+        System.out.println(enunciadoPergunta1);
 
         this.alternativa1 = "Relacionamento Um-para-Um (1:1)";
         this.alternativa2 = "Relacionamento Hierárquico";
@@ -249,6 +267,6 @@ public class Utils {
         alternativas.add(this.alternativa4);
         alternativas.add(this.alternativaCorreta);
 
-        return alternativas;
+        return embaralha(alternativas);
     }
 }
