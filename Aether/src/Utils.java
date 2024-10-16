@@ -9,36 +9,14 @@ public class Utils {
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
     private int posicaoAlternativaCorreta;
-    private int opcaoSelecionada;
     private int encerraGame;
-
-    public int getOpcaoSelecionada() {
-        return opcaoSelecionada;
-    }
-
-    public void setOpcaoSelecionada(int opcaoSelecionada) {
-        this.opcaoSelecionada = opcaoSelecionada;
-    }
 
     public int getEncerraGame() {
         return encerraGame;
     }
 
-    public void setEncerraGame(int encerraGame) {
-        this.encerraGame = encerraGame;
-    }
-
-
     //    MENU
     //    O código morse abaixo do banner diz "Terror no Espaço"
-
-    //    https://manytools.org/hacker-tools/ascii-banner/
-
-    //    Fonte: Alligator
-    /*
-        Alligator by Simon Bradley <syb3@aber.ac.uk>
-        17th June, 1994
-    */
     public void banner() {
         System.out.print("""
                 
@@ -56,59 +34,42 @@ public class Utils {
 
         interacao.nextLine();
     }
-
-    //    Fonte: Alligator2
+    //    https://manytools.org/hacker-tools/ascii-banner/
+    //    Fonte: Alligator
     /*
-        Alligator2 by Daniel Wiz. AKA Merlin Greywolf <merlin@brahms.udel.edu>
-        27th July, 1994
-        This is the STRAIGHT version of the revised Alligator font I edited.
-        It's EXACTLY like my other posted font except the tilt was taken out.
+        Alligator by Simon Bradley <syb3@aber.ac.uk>
+        17th June, 1994
     */
-    public void bannerAlternativo() {
-        System.out.print("""
-                
-                    :::     :::::::::: ::::::::::: :::    ::: :::::::::: ::::::::: \s
-                  :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:\s
-                 +:+   +:+  +:+            +:+     +:+    +:+ +:+        +:+    +:+\s
-                +#++:++#++: +#++:++#       +#+     +#++:++#++ +#++:++#   +#++:++#: \s
-                +#+     +#+ +#+            +#+     +#+    +#+ +#+        +#+    +#+\s
-                #+#     #+# #+#            #+#     #+#    #+# #+#        #+#    #+#\s
-                ###     ### ##########     ###     ###    ### ########## ###    ###\s
-                                                                                   \s
-                      - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---      \s""");
 
-        interacao.nextLine();
+    public void iniciaJogo() {
+        banner();
+    }
+
+    public String selecionaOpcao() {
+        System.out.print("\nSELECIONE UMA OPÇÃO: ");
+        return interacao.next().toLowerCase();
     }
 
     public void retornar() {
         System.out.print("\nPRESSIONE <ENTER> PARA RETORNAR");
         interacao.nextLine();
-    }
-
-    public void prosseguir() {
-        System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
         interacao.nextLine();
     }
 
-    public boolean confirmar() {
+    public int confirmar() {
         System.out.print("""
                 
                 DESEJA CONFIRMAR A AÇÃO?\s
                    (<S>IM)  (<N>ÃO)     \s
-                
-                Resposta:\s""");
+                """);
 
-        String confirmarAcao = interacao.next();
-
-        //    TODO: Bug ao selecionar a opção "n" na confirmação. Analisar para entender melhor
-        return switch (confirmarAcao.toLowerCase()) {
-            case "s" -> true;
-            case "n" -> false;
-            default -> throw new IllegalStateException("\nOPÇÃO INVÁLIDA");
+        return switch (selecionaOpcao()) {
+            case "s" -> 1;
+            case "n" -> 0;
+            default -> -1;
         };
     }
 
-    //    TODO: Implementar o restante da lógica
     public void mostraMenu() {
         System.out.println("""
                 
@@ -127,16 +88,18 @@ public class Utils {
                 3 - Créditos\r
                 4 - Estatísticas\r
                 5 - Sair""");
+
+        opcoesMenu(selecionaOpcao());
     }
 
-    public void opcoesMenu(int opcaoSelecionada) {
+    public void opcoesMenu(String opcaoSelecionada) {
         switch (opcaoSelecionada) {
-            case 1 -> instrucoes();
-            case 2 -> jogar();
-            case 3 -> creditos();
-            case 4 -> estatisticas();
-            case 5 -> sair();
-            default -> System.out.println("\nOPÇÃO INVÁLIDA\n");
+            case "1" -> instrucoes();
+            case "2" -> jogar();
+            case "3" -> creditos();
+            case "4" -> estatisticas();
+            case "5" -> sair();
+            default -> System.out.println("\nOPÇÃO INVÁLIDA");
         }
     }
 
@@ -167,21 +130,17 @@ public class Utils {
         do {
             mostraPergunta(pergunta1());
 
-            System.out.print("\nResposta: ");
-            respostaJogador = interacao.next();
+            respostaJogador = selecionaOpcao();
 
             if (checaResposta(respostaJogador)) {
-
                 contadorRespostaCorreta += 1;
                 System.out.println("\nRESPOSTA CORRETA!");
             } else {
-
                 contadorRespostaIncorreta += 1;
                 System.out.println("\nRESPOSTA INCORRETA! TENTE NOVAMENTE");
             }
         } while (!checaResposta(respostaJogador));
 
-        interacao.nextLine();
         retornar();
     }
 
@@ -225,22 +184,30 @@ public class Utils {
     }
 
     public void sair() {
-        if (!confirmar()) {
-            //  Elaborar melhor o que fazer
-        } else {
-            setEncerraGame(5);
+        int confirmaEncerramento;
 
-            System.out.print("""
-                    
-                    :::::::::: ::::::::::: ::::    :::\s
-                    :+:            :+:     :+:+:   :+:\s
-                    +:+            +:+     :+:+:+  +:+\s
-                    :#::+::#       +#+     +#+ +:+ +#+\s
-                    +#+            +#+     +#+  +#+#+#\s
-                    #+#            #+#     #+#   #+#+#\s
-                    ###        ########### ###    ####\s
-                    """);
-        }
+        do {
+            confirmaEncerramento = confirmar();
+
+            if (confirmaEncerramento == 1) {
+                encerraGame = 5;
+
+                System.out.print("""
+                        
+                        :::::::::: ::::::::::: ::::    :::\s
+                        :+:            :+:     :+:+:   :+:\s
+                        +:+            +:+     :+:+:+  +:+\s
+                        :#::+::#       +#+     +#+ +:+ +#+\s
+                        +#+            +#+     +#+  +#+#+#\s
+                        #+#            #+#     #+#   #+#+#\s
+                        ###        ########### ###    ####\s
+                        """);
+            } else if (confirmaEncerramento == 0) {
+                mostraMenu();
+            } else {
+                System.out.println("\nOPÇÃO INVÁLIDA");
+            }
+        } while (confirmaEncerramento == -1);
     }
 
     //    ALEATORIEDADE
@@ -250,15 +217,14 @@ public class Utils {
     }
 
     //    VALIDAÇÃO
-    //    TODO: Revisar lógica
     public boolean checaResposta(String respostaJogador) {
-        int posicaoResposta = switch (respostaJogador.toLowerCase()) {
+        int posicaoResposta = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
             case "c" -> 2;
             case "d" -> 3;
             case "e" -> 4;
-            default -> -1;
+            default -> -1; // TODO: Revisar isso
         };
 
         return posicaoResposta == posicaoAlternativaCorreta;
@@ -267,14 +233,12 @@ public class Utils {
     //    QUESTÕES
     public void mostraPergunta(ArrayList<String> pergunta) {
         for (int i = 0; i < pergunta.size(); i++) {
-
             System.out.println(opcoes[i] + pergunta.get(i));
         }
 
         posicaoAlternativaCorreta = pergunta.indexOf(this.alternativaCorreta);
     }
 
-    //    TODO: Revisar lógica
     public ArrayList<String> pergunta1() {
         ArrayList<String> alternativas = new ArrayList<>();
 
