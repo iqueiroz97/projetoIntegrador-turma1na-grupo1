@@ -8,8 +8,8 @@ public class Utils {
     String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
-    private int posicaoAlternativaCorreta;
     private int encerraGame;
+    private String enunciadoPergunta;
 
     public int getEncerraGame() {
         return encerraGame;
@@ -41,13 +41,15 @@ public class Utils {
         17th June, 1994
     */
 
-    public void iniciaJogo() {
-        banner();
-    }
-
     public String selecionaOpcao() {
         System.out.print("\nSELECIONE UMA OPÇÃO: ");
         return interacao.next().toLowerCase();
+    }
+
+    public void prosseguir() {
+        System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
+        interacao.nextLine();
+        interacao.nextLine();
     }
 
     public void retornar() {
@@ -56,11 +58,11 @@ public class Utils {
         interacao.nextLine();
     }
 
-    public int confirmar() {
+    public int confirmarAcao() {
         System.out.print("""
                 
                 DESEJA CONFIRMAR A AÇÃO?\s
-                   (<S>IM)  (<N>ÃO)     \s
+                       (S)  (N)         \s
                 """);
 
         return switch (selecionaOpcao()) {
@@ -83,11 +85,11 @@ public class Utils {
                 """);
 
         System.out.println("""
-                1 - Instruções\r
-                2 - Jogar\r
-                3 - Créditos\r
-                4 - Estatísticas\r
-                5 - Sair""");
+                1 - INSTRUÇÕES\r
+                2 - JOGAR\r
+                3 - CRÉDITOS\r
+                4 - ESTATÍSTICAS\r
+                5 - SAIR""");
 
         opcoesMenu(selecionaOpcao());
     }
@@ -99,7 +101,7 @@ public class Utils {
             case "3" -> creditos();
             case "4" -> estatisticas();
             case "5" -> sair();
-            default -> System.out.println("\nOPÇÃO INVÁLIDA");
+            default -> System.out.println("\nOPÇÃO INVÁLIDA!");
         }
     }
 
@@ -122,26 +124,49 @@ public class Utils {
 
     //    TODO: Elaborar inicialização do jogo
     public void jogar() {
-        System.out.println("\nIniciar jogo");
+        System.out.println("\nINICIA A PARTIDA");
 
-        //    Teste de pergunta
-        String respostaJogador;
+        //    Teste de perguntas
+        boolean statusPergunta1;
+        boolean statusPergunta2;
+        boolean statusPergunta3;
+        boolean statusPergunta4;
+        boolean statusPergunta5;
+        boolean encerraPartida = false;
 
-        do {
-            mostraPergunta(pergunta1());
+        while (!encerraPartida) {
+            do {
+                //  Pergunta 1
+                statusPergunta1 = checaResposta(mostraPergunta(pergunta1()), selecionaOpcao());
+            } while (!statusPergunta1);
 
-            respostaJogador = selecionaOpcao();
+            prosseguir();
+            do {
+                //  Pergunta 2
+                statusPergunta2 = checaResposta(mostraPergunta(pergunta2()), selecionaOpcao());
+            } while (!statusPergunta2);
 
-            if (checaResposta(respostaJogador)) {
-                contadorRespostaCorreta += 1;
-                System.out.println("\nRESPOSTA CORRETA!");
-            } else {
-                contadorRespostaIncorreta += 1;
-                System.out.println("\nRESPOSTA INCORRETA! TENTE NOVAMENTE");
-            }
-        } while (!checaResposta(respostaJogador));
+            prosseguir();
+            do {
+                //  Pergunta 3
+                statusPergunta3 = checaResposta(mostraPergunta(pergunta3()), selecionaOpcao());
+            } while (!statusPergunta3);
 
-        retornar();
+            prosseguir();
+            do {
+                //  Pergunta 4
+                statusPergunta4 = checaResposta(mostraPergunta(pergunta4()), selecionaOpcao());
+            } while (!statusPergunta4);
+
+            prosseguir();
+            do {
+                //  Pergunta 5
+                statusPergunta5 = checaResposta(mostraPergunta(pergunta5()), selecionaOpcao());
+            } while (!statusPergunta5);
+
+            System.out.println("\nENCERRANDO PARTIDA...");
+            encerraPartida = true;
+        }
     }
 
     //    TODO: Pensar melhor nos créditos
@@ -178,8 +203,8 @@ public class Utils {
                 ########## ########     ### ###     ### ###     ########### ########     ###     ########### ########  ###     ###  ######## \s
                 """);
 
-        System.out.println("\nRespostas corretas: " + contadorRespostaCorreta);
-        System.out.println("Respostas incorretas: " + contadorRespostaIncorreta);
+        System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
+        System.out.println("RESPOSTAS INCORRETAS: " + contadorRespostaIncorreta);
         retornar();
     }
 
@@ -187,25 +212,25 @@ public class Utils {
         int confirmaEncerramento;
 
         do {
-            confirmaEncerramento = confirmar();
+            confirmaEncerramento = confirmarAcao();
 
             if (confirmaEncerramento == 1) {
                 encerraGame = 5;
 
                 System.out.print("""
                         
-                        :::::::::: ::::::::::: ::::    :::\s
-                        :+:            :+:     :+:+:   :+:\s
-                        +:+            +:+     :+:+:+  +:+\s
-                        :#::+::#       +#+     +#+ +:+ +#+\s
-                        +#+            +#+     +#+  +#+#+#\s
-                        #+#            #+#     #+#   #+#+#\s
-                        ###        ########### ###    ####\s
+                        :::::::::  :::   ::: ::::::::::\s
+                        :+:    :+: :+:   :+: :+:       \s
+                        +:+    +:+  +:+ +:+  +:+       \s
+                        +#++:++#+    +#++:   +#++:++#  \s
+                        +#+    +#+    +#+    +#+       \s
+                        #+#    #+#    #+#    #+#       \s
+                        #########     ###    ##########\s
                         """);
             } else if (confirmaEncerramento == 0) {
                 mostraMenu();
             } else {
-                System.out.println("\nOPÇÃO INVÁLIDA");
+                System.out.println("\nOPÇÃO INVÁLIDA! TENTE NOVAMENTE.");
             }
         } while (confirmaEncerramento == -1);
     }
@@ -217,55 +242,155 @@ public class Utils {
     }
 
     //    VALIDAÇÃO
-    public boolean checaResposta(String respostaJogador) {
+    public boolean checaResposta(int posicaoPergunta, String respostaJogador) {
         int posicaoResposta = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
             case "c" -> 2;
             case "d" -> 3;
             case "e" -> 4;
-            default -> -1; // TODO: Revisar isso
+            default -> -1;
         };
 
-        return posicaoResposta == posicaoAlternativaCorreta;
+        if (posicaoPergunta == posicaoResposta) {
+            contadorRespostaCorreta += 1;
+            System.out.println("\nRESPOSTA CORRETA!");
+            return true;
+        } else {
+            contadorRespostaIncorreta += 1;
+            System.out.println("\nRESPOSTA INCORRETA! TENTE NOVAMENTE.");
+            return false;
+        }
     }
 
     //    QUESTÕES
-    public void mostraPergunta(ArrayList<String> pergunta) {
+    public int mostraPergunta(ArrayList<String> pergunta) {
+        System.out.println(enunciadoPergunta);
+
         for (int i = 0; i < pergunta.size(); i++) {
             System.out.println(opcoes[i] + pergunta.get(i));
         }
 
-        posicaoAlternativaCorreta = pergunta.indexOf(this.alternativaCorreta);
+        return pergunta.indexOf(alternativaCorreta);
     }
 
+    //    Questionário Banco de Dados (Relacionamento)
     public ArrayList<String> pergunta1() {
         ArrayList<String> alternativas = new ArrayList<>();
 
-        /*Qual é o tipo de relacionamento onde uma entidade pode estar
-        associada a várias outras, mas essas estão associadas a apenas
-        uma entidade?*/
-
-        String enunciadoPergunta1 = """
+        enunciadoPergunta = """
                 
                 Qual é o tipo de relacionamento onde uma entidade pode estar
                 associada a várias outras, mas essas estão associadas a apenas
                 uma entidade?
                 """;
 
-        System.out.println(enunciadoPergunta1);
+        alternativa1 = "Relacionamento Um-para-Um (1:1)";
+        alternativa2 = "Relacionamento Hierárquico";
+        alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
+        alternativa4 = "Relacionamento Circular";
+        alternativaCorreta = "Relacionamento Um-para-Muitos (1:N)";
 
-        this.alternativa1 = "Relacionamento Um-para-Um (1:1)";
-        this.alternativa2 = "Relacionamento Hierárquico";
-        this.alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
-        this.alternativa4 = "Relacionamento Circular";
-        this.alternativaCorreta = "Relacionamento Um-para-Muitos (1:N)";
+        alternativas.add(alternativa1);
+        alternativas.add(alternativa2);
+        alternativas.add(alternativa3);
+        alternativas.add(alternativa4);
+        alternativas.add(alternativaCorreta);
 
-        alternativas.add(this.alternativa1);
-        alternativas.add(this.alternativa2);
-        alternativas.add(this.alternativa3);
-        alternativas.add(this.alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        return embaralha(alternativas);
+    }
+
+    public ArrayList<String> pergunta2() {
+        ArrayList<String> alternativas = new ArrayList<>();
+
+        enunciadoPergunta = """
+                
+                Em um relacionamento Muitos-para-Muitos (N:N), como geralmente
+                se implementa a ligação entre as tabelas no banco de dados relacional?
+                """;
+
+        alternativa1 = "Através de uma chave estrangeira simples em cada tabela";
+        alternativa2 = "Por meio de uma função SQL";
+        alternativa3 = "Com triggers no banco de dados";
+        alternativa4 = "Diretamente na cláusula WHERE das consultas";
+        alternativaCorreta = "Usando uma tabela de junção (ou associativa) que contém chaves estrangeiras de ambas as tabelas";
+
+        alternativas.add(alternativa1);
+        alternativas.add(alternativa2);
+        alternativas.add(alternativa3);
+        alternativas.add(alternativa4);
+        alternativas.add(alternativaCorreta);
+
+        return embaralha(alternativas);
+    }
+
+    public ArrayList<String> pergunta3() {
+        ArrayList<String> alternativas = new ArrayList<>();
+
+        enunciadoPergunta = """
+                
+                Em um banco de dados relacional, o que uma chave estrangeira representa?
+                """;
+
+        alternativa1 = "Uma chave que identifica de forma única um registro na tabela";
+        alternativa2 = "Um índice que acelera as consultas";
+        alternativa3 = "Um valor nulo em uma coluna específica";
+        alternativa4 = "Uma forma de normalização de dados";
+        alternativaCorreta = "Uma coluna ou grupo de colunas que faz referência a uma chave primária em outra tabela";
+
+        alternativas.add(alternativa1);
+        alternativas.add(alternativa2);
+        alternativas.add(alternativa3);
+        alternativas.add(alternativa4);
+        alternativas.add(alternativaCorreta);
+
+        return embaralha(alternativas);
+    }
+
+    public ArrayList<String> pergunta4() {
+        ArrayList<String> alternativas = new ArrayList<>();
+
+        enunciadoPergunta = """
+                
+                Qual conceito de normalização elimina a duplicação de dados ao
+                garantir que cada atributo de uma tabela dependa unicamente da
+                chave primária?
+                """;
+
+        alternativa1 = "Primeira Forma Normal (1FN)";
+        alternativa2 = "Segunda Forma Normal (2FN)";
+        alternativa3 = "Forma Não Normal (FNN)";
+        alternativa4 = "Forma Normal de Boyce-Codd (FNBC)";
+        alternativaCorreta = "Terceira Forma Normal (3FN)";
+
+        alternativas.add(alternativa1);
+        alternativas.add(alternativa2);
+        alternativas.add(alternativa3);
+        alternativas.add(alternativa4);
+        alternativas.add(alternativaCorreta);
+
+        return embaralha(alternativas);
+    }
+
+    public ArrayList<String> pergunta5() {
+        ArrayList<String> alternativas = new ArrayList<>();
+
+        enunciadoPergunta = """
+                
+                Qual das opções abaixo é um exemplo de relacionamento Um-para-Um (1:1)?
+                """;
+
+        alternativa1 = "Um autor e seus livros";
+        alternativa2 = "Um país e suas cidades";
+        alternativa3 = "Um aluno e seus cursos";
+        alternativa4 = "Um pedido e seus produtos";
+        alternativaCorreta = "Um número de identificação de cidadão e o próprio cidadão";
+
+        alternativas.add(alternativa1);
+        alternativas.add(alternativa2);
+        alternativas.add(alternativa3);
+        alternativas.add(alternativa4);
+        alternativas.add(alternativaCorreta);
 
         return embaralha(alternativas);
     }
