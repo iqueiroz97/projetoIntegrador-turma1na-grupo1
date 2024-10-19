@@ -5,11 +5,11 @@ public class Utils {
 
     //    VARIÁVEIS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
-    String alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
+    private final ArrayList<ArrayList<String>> listaPerguntas = new ArrayList<>();
+    private String enunciadoPergunta, alternativa1, alternativa2, alternativa3, alternativa4, alternativaCorreta;
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
     private int encerraGame;
-    private String enunciadoPergunta;
 
     public int getEncerraGame() {
         return encerraGame;
@@ -126,7 +126,7 @@ public class Utils {
     public void jogar() {
         System.out.println("\nINICIA A PARTIDA");
 
-        //    Teste de perguntas
+        //    Teste de listaPerguntas
         boolean statusPergunta1;
         boolean statusPergunta2;
         boolean statusPergunta3;
@@ -135,34 +135,48 @@ public class Utils {
         boolean encerraPartida = false;
 
         while (!encerraPartida) {
-            do {
-                //  Pergunta 1
-                statusPergunta1 = checaResposta(mostraPergunta(pergunta1()), selecionaOpcao());
-            } while (!statusPergunta1);
+            listaPerguntas.add(pergunta1());
+            listaPerguntas.add(pergunta2());
+            listaPerguntas.add(pergunta3());
+            listaPerguntas.add(pergunta4());
+            listaPerguntas.add(pergunta5());
 
-            prosseguir();
-            do {
-                //  Pergunta 2
-                statusPergunta2 = checaResposta(mostraPergunta(pergunta2()), selecionaOpcao());
-            } while (!statusPergunta2);
+            embaralhaLista(listaPerguntas);
 
-            prosseguir();
-            do {
-                //  Pergunta 3
-                statusPergunta3 = checaResposta(mostraPergunta(pergunta3()), selecionaOpcao());
-            } while (!statusPergunta3);
+//            checaResposta(mostraPergunta(listaPerguntas.get(0)), selecionaOpcao());
 
-            prosseguir();
-            do {
-                //  Pergunta 4
-                statusPergunta4 = checaResposta(mostraPergunta(pergunta4()), selecionaOpcao());
-            } while (!statusPergunta4);
+            for (int i = 0; i < listaPerguntas.size(); i++) {
+                checaResposta(mostraPergunta(listaPerguntas.get(i)), selecionaOpcao());
+            }
 
-            prosseguir();
-            do {
-                //  Pergunta 5
-                statusPergunta5 = checaResposta(mostraPergunta(pergunta5()), selecionaOpcao());
-            } while (!statusPergunta5);
+//            do {
+//                //  Pergunta 1
+//                statusPergunta1 = checaResposta(mostraPergunta(pergunta1()), selecionaOpcao());
+//            } while (!statusPergunta1);
+//
+//            prosseguir();
+//            do {
+//                //  Pergunta 2
+//                statusPergunta2 = checaResposta(mostraPergunta(pergunta2()), selecionaOpcao());
+//            } while (!statusPergunta2);
+//
+//            prosseguir();
+//            do {
+//                //  Pergunta 3
+//                statusPergunta3 = checaResposta(mostraPergunta(pergunta3()), selecionaOpcao());
+//            } while (!statusPergunta3);
+//
+//            prosseguir();
+//            do {
+//                //  Pergunta 4
+//                statusPergunta4 = checaResposta(mostraPergunta(pergunta4()), selecionaOpcao());
+//            } while (!statusPergunta4);
+//
+//            prosseguir();
+//            do {
+//                //  Pergunta 5
+//                statusPergunta5 = checaResposta(mostraPergunta(pergunta5()), selecionaOpcao());
+//            } while (!statusPergunta5);
 
             System.out.println("\nENCERRANDO PARTIDA...");
             encerraPartida = true;
@@ -236,14 +250,13 @@ public class Utils {
     }
 
     //    ALEATORIEDADE
-    public ArrayList<String> embaralha(ArrayList<String> item) {
-        Collections.shuffle(item);
-        return item;
+    public void embaralhaLista(Object item) {
+        Collections.shuffle((List<?>) item);
     }
 
     //    VALIDAÇÃO
-    public boolean checaResposta(int posicaoPergunta, String respostaJogador) {
-        int posicaoResposta = switch (respostaJogador) {
+    public boolean checaResposta(int posicaoAlternativaCorreta, String respostaJogador) {
+        int posicaoRespostaJogador = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
             case "c" -> 2;
@@ -252,26 +265,33 @@ public class Utils {
             default -> -1;
         };
 
-        if (posicaoPergunta == posicaoResposta) {
+        if (posicaoAlternativaCorreta == posicaoRespostaJogador) {
             contadorRespostaCorreta += 1;
             System.out.println("\nRESPOSTA CORRETA!");
             return true;
+        } else if (posicaoRespostaJogador == -1) {
+            System.out.println("\nRESPOSTA INVÁLIDA!");
+            return false;
         } else {
             contadorRespostaIncorreta += 1;
-            System.out.println("\nRESPOSTA INCORRETA! TENTE NOVAMENTE.");
+            System.out.println("\nRESPOSTA INCORRETA!");
             return false;
         }
     }
 
     //    QUESTÕES
     public int mostraPergunta(ArrayList<String> pergunta) {
-        System.out.println(enunciadoPergunta);
+        //  O enunciado é mostrado e depois é removido do Array
+        System.out.println(pergunta.get(0));
+        pergunta.remove(0);
+
+        embaralhaLista(pergunta);
 
         for (int i = 0; i < pergunta.size(); i++) {
             System.out.println(opcoes[i] + pergunta.get(i));
         }
 
-        return pergunta.indexOf(alternativaCorreta);
+        return pergunta.indexOf(this.alternativaCorreta);
     }
 
     //    Questionário Banco de Dados (Relacionamento)
@@ -285,6 +305,9 @@ public class Utils {
                 uma entidade?
                 """;
 
+        //  O enunciado sempre entra na posição zero do Array
+        alternativas.add(enunciadoPergunta);
+
         alternativa1 = "Relacionamento Um-para-Um (1:1)";
         alternativa2 = "Relacionamento Hierárquico";
         alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
@@ -297,7 +320,7 @@ public class Utils {
         alternativas.add(alternativa4);
         alternativas.add(alternativaCorreta);
 
-        return embaralha(alternativas);
+        return alternativas;
     }
 
     public ArrayList<String> pergunta2() {
@@ -308,6 +331,8 @@ public class Utils {
                 Em um relacionamento Muitos-para-Muitos (N:N), como geralmente
                 se implementa a ligação entre as tabelas no banco de dados relacional?
                 """;
+
+        alternativas.add(enunciadoPergunta);
 
         alternativa1 = "Através de uma chave estrangeira simples em cada tabela";
         alternativa2 = "Por meio de uma função SQL";
@@ -321,7 +346,7 @@ public class Utils {
         alternativas.add(alternativa4);
         alternativas.add(alternativaCorreta);
 
-        return embaralha(alternativas);
+        return alternativas;
     }
 
     public ArrayList<String> pergunta3() {
@@ -331,6 +356,8 @@ public class Utils {
                 
                 Em um banco de dados relacional, o que uma chave estrangeira representa?
                 """;
+
+        alternativas.add(enunciadoPergunta);
 
         alternativa1 = "Uma chave que identifica de forma única um registro na tabela";
         alternativa2 = "Um índice que acelera as consultas";
@@ -344,7 +371,7 @@ public class Utils {
         alternativas.add(alternativa4);
         alternativas.add(alternativaCorreta);
 
-        return embaralha(alternativas);
+        return alternativas;
     }
 
     public ArrayList<String> pergunta4() {
@@ -356,6 +383,8 @@ public class Utils {
                 garantir que cada atributo de uma tabela dependa unicamente da
                 chave primária?
                 """;
+
+        alternativas.add(enunciadoPergunta);
 
         alternativa1 = "Primeira Forma Normal (1FN)";
         alternativa2 = "Segunda Forma Normal (2FN)";
@@ -369,7 +398,7 @@ public class Utils {
         alternativas.add(alternativa4);
         alternativas.add(alternativaCorreta);
 
-        return embaralha(alternativas);
+        return alternativas;
     }
 
     public ArrayList<String> pergunta5() {
@@ -379,6 +408,8 @@ public class Utils {
                 
                 Qual das opções abaixo é um exemplo de relacionamento Um-para-Um (1:1)?
                 """;
+
+        alternativas.add(enunciadoPergunta);
 
         alternativa1 = "Um autor e seus livros";
         alternativa2 = "Um país e suas cidades";
@@ -392,6 +423,6 @@ public class Utils {
         alternativas.add(alternativa4);
         alternativas.add(alternativaCorreta);
 
-        return embaralha(alternativas);
+        return alternativas;
     }
 }
