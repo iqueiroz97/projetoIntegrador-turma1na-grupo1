@@ -5,19 +5,25 @@ public class Utils {
 
     //    VARIÁVEIS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
-    private final boolean[] statusPerguntas = new boolean[5];
-    //    private String enunciadoPergunta, alternativa1, alternativa2, alternativa3, alternativa4;
-    private String alternativaCorreta;
+    ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
+    private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3, alternativaCorretaPergunta4, alternativaCorretaPergunta5;
     private int posicaoAlternativaCorreta;
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
+    private boolean primeiraExecucao = true;
     private int encerraGame;
 
     public int getEncerraGame() {
         return encerraGame;
     }
 
-    //    MENU
+    //    BANNER
+    //    https://manytools.org/hacker-tools/ascii-banner/
+    //    Fonte: Alligator
+    /*
+        Alligator by Simon Bradley <syb3@aber.ac.uk>
+        17th June, 1994
+    */
     //    O código morse abaixo do banner diz "Terror no Espaço"
     public void banner() {
         System.out.print("""
@@ -36,12 +42,6 @@ public class Utils {
 
         entrada.nextLine();
     }
-    //    https://manytools.org/hacker-tools/ascii-banner/
-    //    Fonte: Alligator
-    /*
-        Alligator by Simon Bradley <syb3@aber.ac.uk>
-        17th June, 1994
-    */
 
     public String selecionaOpcao() {
         System.out.print("\nSELECIONE UMA OPÇÃO: ");
@@ -129,20 +129,12 @@ public class Utils {
     //    TODO: Elaborar inicialização do jogo
     public void jogar() {
         System.out.println("\nINICIA A PARTIDA");
-
-        //    Teste de perguntas
         boolean encerraPartida = false;
 
+        //    Teste de perguntas
         while (!encerraPartida) {
-            //  Pergunta 1
-            do {
-                statusPerguntas[0] = checaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
-            } while (!statusPerguntas[0]);
-
-//                  Pergunta individual
-//            do {
-//                statusPergunta1 = checaResposta(mostraPergunta(listaPerguntas.get(0)), selecionaOpcao());
-//            } while (!statusPergunta1);
+            //  Três tentativas para acertar
+            fazPergunta();
 
             interacao("prosseguir");
 
@@ -225,9 +217,23 @@ public class Utils {
     }
 
     //    VALIDAÇÃO
-    public boolean checaResposta(ArrayList<String> pergunta, String respostaJogador) {
-        int posicaoAlternativaCorreta = pergunta.indexOf(this.alternativaCorreta);
+    public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador) {
+        //  Checa a posição da alternativa correta na pergunta atual
+        for (int i = 0; i < pergunta.size(); i++) {
+            if (pergunta.get(i).equals(alternativaCorretaPergunta1)) {
+                posicaoAlternativaCorreta = i;
+            } else if (pergunta.get(i).equals(alternativaCorretaPergunta2)) {
+                posicaoAlternativaCorreta = i;
+            } else if (pergunta.get(i).equals(alternativaCorretaPergunta3)) {
+                posicaoAlternativaCorreta = i;
+            } else if (pergunta.get(i).equals(alternativaCorretaPergunta4)) {
+                posicaoAlternativaCorreta = i;
+            } else if (pergunta.get(i).equals(alternativaCorretaPergunta5)) {
+                posicaoAlternativaCorreta = i;
+            }
+        }
 
+        //  Checa a posição da resposta do jogador
         int posicaoRespostaJogador = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
@@ -237,6 +243,7 @@ public class Utils {
             default -> -1;
         };
 
+        // Compara a posição da alternativa correta com a posição da resposta do jogador
         if (posicaoAlternativaCorreta == posicaoRespostaJogador) {
             contadorRespostaCorreta += 1;
             System.out.println("\nRESPOSTA CORRETA!");
@@ -246,26 +253,45 @@ public class Utils {
             return false;
         } else {
             contadorRespostaIncorreta += 1;
-            System.out.println("\nRESPOSTA INCORRETA!");
+            System.out.println("\nRESPOSTA INCORRETA!\n");
             return false;
         }
     }
 
     //    QUESTÕES
+    public void fazPergunta() {
+        if (!listaPerguntas().isEmpty()) {
+            for (int tentativas = 1; tentativas <= 3; tentativas++) {
+                boolean statusPergunta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
+
+                if (statusPergunta || tentativas == 3) {
+                    listaPerguntas().remove(0);
+                    tentativas = 4;
+                }
+            }
+        } else {
+            System.out.println("\nNÃO EXISTEM MAIS PERGUNTAS AS SEREM FEITAS");
+        }
+    }
+
+    //    Entrega a lista de perguntas de forma embaralhada
     public ArrayList<ArrayList<String>> listaPerguntas() {
-        ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
+        if (primeiraExecucao) {
+            perguntas.add(pergunta1());
+            perguntas.add(pergunta2());
+            perguntas.add(pergunta3());
+            perguntas.add(pergunta4());
+            perguntas.add(pergunta5());
 
-        perguntas.add(pergunta1());
-        perguntas.add(pergunta2());
-        perguntas.add(pergunta3());
-        perguntas.add(pergunta4());
-        perguntas.add(pergunta5());
+            embaralhaLista(perguntas);
 
-//        embaralhaLista(perguntas);
+            primeiraExecucao = false;
+        }
 
         return perguntas;
     }
 
+    //    Mostra a pergunta com as alternativas embaralhadas
     public ArrayList<String> mostraPergunta(ArrayList<String> pergunta) {
         //  Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
         if (pergunta.size() > 5) {
@@ -294,20 +320,20 @@ public class Utils {
                 uma entidade?
                 """;
 
-        //  O enunciado sempre entra na posição zero do Array
+        //  O enunciado inicialmente entra na posição zero do Array
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Relacionamento Um-para-Um (1:1)";
         String alternativa2 = "Relacionamento Hierárquico";
         String alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
         String alternativa4 = "Relacionamento Circular";
-        alternativaCorreta = "Relacionamento Um-para-Muitos (1:N)";
+        alternativaCorretaPergunta1 = "Relacionamento Um-para-Muitos (1:N)";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
         alternativas.add(alternativa3);
         alternativas.add(alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        alternativas.add(this.alternativaCorretaPergunta1);
 
         return alternativas;
     }
@@ -327,13 +353,14 @@ public class Utils {
         String alternativa2 = "Por meio de uma função SQL";
         String alternativa3 = "Com triggers no banco de dados";
         String alternativa4 = "Diretamente na cláusula WHERE das consultas";
-        alternativaCorreta = "Usando uma tabela de junção (ou associativa) que contém chaves estrangeiras de ambas as tabelas";
+        alternativaCorretaPergunta2 = "Usando uma tabela de junção (ou associativa) que contém chaves estrangeiras de" +
+                " ambas as tabelas";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
         alternativas.add(alternativa3);
         alternativas.add(alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        alternativas.add(this.alternativaCorretaPergunta2);
 
         return alternativas;
     }
@@ -352,13 +379,14 @@ public class Utils {
         String alternativa2 = "Um índice que acelera as consultas";
         String alternativa3 = "Um valor nulo em uma coluna específica";
         String alternativa4 = "Uma forma de normalização de dados";
-        alternativaCorreta = "Uma coluna ou grupo de colunas que faz referência a uma chave primária em outra tabela";
+        alternativaCorretaPergunta3 = "Uma coluna ou grupo de colunas que faz referência a uma chave primária em " +
+                "outra tabela";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
         alternativas.add(alternativa3);
         alternativas.add(alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        alternativas.add(this.alternativaCorretaPergunta3);
 
         return alternativas;
     }
@@ -379,13 +407,13 @@ public class Utils {
         String alternativa2 = "Segunda Forma Normal (2FN)";
         String alternativa3 = "Forma Não Normal (FNN)";
         String alternativa4 = "Forma Normal de Boyce-Codd (FNBC)";
-        alternativaCorreta = "Terceira Forma Normal (3FN)";
+        alternativaCorretaPergunta4 = "Terceira Forma Normal (3FN)";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
         alternativas.add(alternativa3);
         alternativas.add(alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        alternativas.add(this.alternativaCorretaPergunta4);
 
         return alternativas;
     }
@@ -404,13 +432,13 @@ public class Utils {
         String alternativa2 = "Um país e suas cidades";
         String alternativa3 = "Um aluno e seus cursos";
         String alternativa4 = "Um pedido e seus produtos";
-        alternativaCorreta = "Um número de identificação de cidadão e o próprio cidadão";
+        alternativaCorretaPergunta5 = "Um número de identificação de cidadão e o próprio cidadão";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
         alternativas.add(alternativa3);
         alternativas.add(alternativa4);
-        alternativas.add(this.alternativaCorreta);
+        alternativas.add(this.alternativaCorretaPergunta5);
 
         return alternativas;
     }
