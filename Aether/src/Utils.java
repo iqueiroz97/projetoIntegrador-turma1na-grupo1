@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Utils {
     Scanner entrada = new Scanner(System.in);
+    Timer relogio = new Timer();
 
     //    VARIÁVEIS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
@@ -98,6 +99,7 @@ public class Utils {
         opcoesMenu(selecionaOpcao());
     }
 
+    //     MENU
     public void opcoesMenu(String opcaoSelecionada) {
         switch (opcaoSelecionada) {
             case "1" -> instrucoes();
@@ -135,7 +137,6 @@ public class Utils {
         while (!encerraPartida) {
             //  Três tentativas para acertar
             fazPergunta();
-
             interacao("prosseguir");
 
             System.out.println("\nENCERRANDO PARTIDA...");
@@ -215,6 +216,11 @@ public class Utils {
     public void embaralhaLista(Object lista) {
         Collections.shuffle((List<?>) lista);
     }
+
+    //    TIMER
+//    public void timer() {
+//        relogio.schedule();
+//    }
 
     //    VALIDAÇÃO
     public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador) {
