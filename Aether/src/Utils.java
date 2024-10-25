@@ -138,6 +138,26 @@ public class Utils {
 
             interacao("prosseguir");
 
+            fazPergunta();
+
+            interacao("prosseguir");
+
+            fazPergunta();
+
+            interacao("prosseguir");
+
+            fazPergunta();
+
+            interacao("prosseguir");
+
+            fazPergunta();
+
+            interacao("prosseguir");
+
+            fazPergunta();
+
+            interacao("prosseguir");
+
             System.out.println("\nENCERRANDO PARTIDA...");
             encerraPartida = true;
         }
