@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Utils {
     Scanner entrada = new Scanner(System.in);
+    // Usar thread sleep / wait para incrementar variavel de tempo passado. Usar essa variável para controlar quando
+    // o tempo para resolver a questão acabou.
 
     //    VARIÁVEIS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
@@ -12,6 +14,7 @@ public class Utils {
     private int contadorRespostaIncorreta;
     private boolean primeiraExecucao = true;
     private int encerraGame;
+    private int tempoPassado;
 
     public int getEncerraGame() {
         return encerraGame;
@@ -76,7 +79,7 @@ public class Utils {
         };
     }
 
-    public void mostraMenu() {
+    public void mostraMenu() throws InterruptedException {
         System.out.println("""
                 
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
@@ -99,7 +102,7 @@ public class Utils {
     }
 
     //     MENU
-    public void opcoesMenu(String opcaoSelecionada) {
+    public void opcoesMenu(String opcaoSelecionada) throws InterruptedException {
         switch (opcaoSelecionada) {
             case "1" -> instrucoes();
             case "2" -> jogar();
@@ -128,7 +131,7 @@ public class Utils {
     }
 
     //    TODO: Elaborar inicialização do jogo
-    public void jogar() {
+    public void jogar() throws InterruptedException {
         System.out.println("\nINICIA A PARTIDA");
         boolean encerraPartida = false;
 
@@ -184,7 +187,7 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void sair() {
+    public void sair() throws InterruptedException {
         int confirmaEncerramento;
 
         do {
@@ -214,6 +217,12 @@ public class Utils {
     //    ALEATORIEDADE
     public void embaralhaLista(Object lista) {
         Collections.shuffle((List<?>) lista);
+    }
+
+    // TIMER
+    public void timer() throws InterruptedException {
+        Thread.sleep(20000);
+        tempoPassado = 20;
     }
 
     //    VALIDAÇÃO
@@ -259,12 +268,14 @@ public class Utils {
     }
 
     //    QUESTÕES
-    public void fazPergunta() {
+    public void fazPergunta() throws InterruptedException {
         if (!listaPerguntas().isEmpty()) {
+            timer();
+
             for (int tentativas = 1; tentativas <= 3; tentativas++) {
                 boolean statusPergunta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
 
-                if (statusPergunta || tentativas == 3) {
+                if (statusPergunta || tentativas == 3 || tempoPassado == 20) {
                     listaPerguntas().remove(0);
                     tentativas = 4;
                 }
