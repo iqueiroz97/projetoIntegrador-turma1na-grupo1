@@ -3,6 +3,7 @@ public class Main {
         Utils utils = new Utils();
 
         utils.banner();
+        System.out.println("hellow");    
 
         do {
             utils.mostraMenu();
