@@ -1,22 +1,23 @@
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Utils {
+    //  VARIÁVEIS E OBJETOS
     Scanner entrada = new Scanner(System.in);
-    // Usar thread sleep / wait para incrementar variavel de tempo passado. Usar essa variável para controlar quando
-    // o tempo para resolver a questão acabou.
-
-    //    VARIÁVEIS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
     ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
     private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3, alternativaCorretaPergunta4, alternativaCorretaPergunta5;
     private int posicaoAlternativaCorreta;
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
-    private boolean primeiraExecucao = true;
-    private int encerraGame;
-    private int tempoPassado;
+    private boolean primeiraExecucaoPartida = true;
+    private boolean encerraGame;
+    private boolean primeiraExecucaoJogo = true;
 
-    public int getEncerraGame() {
+    //  GETTERS
+    public boolean getEncerraGame() {
         return encerraGame;
     }
 
@@ -46,6 +47,18 @@ public class Utils {
         entrada.nextLine();
     }
 
+    //  INICIALIZAÇÃO
+    public void iniciaJogo() {
+        if (primeiraExecucaoJogo) {
+            banner();
+            mostraMenu();
+            primeiraExecucaoJogo = false;
+        } else {
+            mostraMenu();
+        }
+    }
+
+    //  INTERAÇÕES
     public String selecionaOpcao() {
         System.out.print("\nSELECIONE UMA OPÇÃO: ");
         return entrada.next().toLowerCase();
@@ -79,7 +92,8 @@ public class Utils {
         };
     }
 
-    public void mostraMenu() throws InterruptedException {
+    //  MENU
+    public void mostraMenu() {
         System.out.println("""
                 
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
@@ -101,8 +115,7 @@ public class Utils {
         opcoesMenu(selecionaOpcao());
     }
 
-    //     MENU
-    public void opcoesMenu(String opcaoSelecionada) throws InterruptedException {
+    public void opcoesMenu(String opcaoSelecionada) {
         switch (opcaoSelecionada) {
             case "1" -> instrucoes();
             case "2" -> jogar();
@@ -130,20 +143,10 @@ public class Utils {
         interacao("retornar");
     }
 
-    //    TODO: Elaborar inicialização do jogo
-    public void jogar() throws InterruptedException {
-        System.out.println("\nINICIA A PARTIDA");
-        boolean encerraPartida = false;
-
-        //    Teste de perguntas
-        while (!encerraPartida) {
-            //  Três tentativas para acertar
-            fazPergunta();
-            interacao("prosseguir");
-
-            System.out.println("\nENCERRANDO PARTIDA...");
-            encerraPartida = true;
-        }
+    public void jogar() {
+        fazPergunta();
+        interacao("prosseguir");
+        System.out.println("\nENCERRANDO PARTIDA...");
     }
 
     //    TODO: Pensar melhor nos créditos
@@ -187,14 +190,14 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void sair() throws InterruptedException {
+    public void sair() {
         int confirmaEncerramento;
 
         do {
             confirmaEncerramento = confirmarAcao();
 
             if (confirmaEncerramento == 1) {
-                encerraGame = 5;
+                encerraGame = true;
 
                 System.out.print("""
                         
@@ -219,13 +222,7 @@ public class Utils {
         Collections.shuffle((List<?>) lista);
     }
 
-    // TIMER
-    public void timer() throws InterruptedException {
-        Thread.sleep(20000);
-        tempoPassado = 20;
-    }
-
-    //    VALIDAÇÃO
+    //  VALIDAÇÃO
     public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador) {
         //  Checa a posição da alternativa correta na pergunta atual
         for (int i = 0; i < pergunta.size(); i++) {
@@ -268,17 +265,40 @@ public class Utils {
     }
 
     //    QUESTÕES
-    public void fazPergunta() throws InterruptedException {
+    public void fazPergunta() {
         if (!listaPerguntas().isEmpty()) {
-            timer();
+            boolean encerraQuestao = false;
+            int tentativas = 3;
+            int contadorTentativas = 1;
+            int tempoLimite = 30; // Tempo para o jogar responder uma questão (Em segundos)
 
-            for (int tentativas = 1; tentativas <= 3; tentativas++) {
-                boolean statusPergunta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
+            //  TIMER
+            //  Cria um novo cronômetro
+            ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
 
-                if (statusPergunta || tentativas == 3 || tempoPassado == 20) {
-                    listaPerguntas().remove(0);
-                    tentativas = 4;
+            Runnable encerraCronometro = () -> {
+                if (!cronometro.isShutdown()) {
+                    System.out.print("\nTEMPO ESGOTADO! SELECIONE UMA OPÇÃO: ");
+                    cronometro.shutdown();
                 }
+            };
+
+            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimite + " SEGUNDOS PARA RESPONDER\n");
+            cronometro.schedule(encerraCronometro, tempoLimite, TimeUnit.SECONDS);
+
+            while (!encerraQuestao && tentativas > 0) {
+                System.out.println("TENTATIVA: " + contadorTentativas + "\n");
+
+                boolean respostaCorreta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
+
+                if (respostaCorreta || cronometro.isShutdown()) {
+                    listaPerguntas().remove(0); //  Remove a pergunta da lista de perguntas
+                    cronometro.shutdown();
+                    encerraQuestao = true;
+                }
+
+                tentativas--;
+                contadorTentativas++;
             }
         } else {
             System.out.println("\nNÃO EXISTEM MAIS PERGUNTAS AS SEREM FEITAS");
@@ -287,7 +307,7 @@ public class Utils {
 
     //    Entrega a lista de perguntas de forma embaralhada
     public ArrayList<ArrayList<String>> listaPerguntas() {
-        if (primeiraExecucao) {
+        if (primeiraExecucaoPartida) {
             perguntas.add(pergunta1());
             perguntas.add(pergunta2());
             perguntas.add(pergunta3());
@@ -296,13 +316,13 @@ public class Utils {
 
             embaralhaLista(perguntas);
 
-            primeiraExecucao = false;
+            primeiraExecucaoPartida = false;
         }
 
         return perguntas;
     }
 
-    //    Mostra a pergunta com as alternativas embaralhadas
+    //  Mostra a pergunta com as alternativas embaralhadas
     public ArrayList<String> mostraPergunta(ArrayList<String> pergunta) {
         //  Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
         if (pergunta.size() > 5) {
@@ -325,7 +345,6 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                
                 Qual é o tipo de relacionamento onde uma entidade pode estar
                 associada a várias outras, mas essas estão associadas a apenas
                 uma entidade?
@@ -353,7 +372,6 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                
                 Em um relacionamento Muitos-para-Muitos (N:N), como geralmente
                 se implementa a ligação entre as tabelas no banco de dados relacional?
                 """;
@@ -380,7 +398,6 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                
                 Em um banco de dados relacional, o que uma chave estrangeira representa?
                 """;
 
@@ -406,7 +423,6 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                
                 Qual conceito de normalização elimina a duplicação de dados ao
                 garantir que cada atributo de uma tabela dependa unicamente da
                 chave primária?
@@ -433,7 +449,6 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                
                 Qual das opções abaixo é um exemplo de relacionamento Um-para-Um (1:1)?
                 """;
 
