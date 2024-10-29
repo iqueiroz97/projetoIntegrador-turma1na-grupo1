@@ -259,7 +259,7 @@ public class Utils {
             return false;
         } else {
             contadorRespostaIncorreta += 1;
-            System.out.println("\nRESPOSTA INCORRETA!\n");
+            System.out.println("\nRESPOSTA INCORRETA!");
             return false;
         }
     }
@@ -269,13 +269,13 @@ public class Utils {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
             int tentativas = 3;
-            int contadorTentativas = 1;
-            int tempoLimite = 30; // Tempo para o jogar responder uma questão (Em segundos)
+            int tempoLimite = 30; // Tempo para o jogador responder uma questão (Em segundos)
 
             //  TIMER
             //  Cria um novo cronômetro
             ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
 
+            //  Tarefa para encerrar o cronômetro
             Runnable encerraCronometro = () -> {
                 if (!cronometro.isShutdown()) {
                     System.out.print("\nTEMPO ESGOTADO! SELECIONE UMA OPÇÃO: ");
@@ -283,11 +283,17 @@ public class Utils {
                 }
             };
 
-            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimite + " SEGUNDOS PARA RESPONDER\n");
+            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimite + " SEGUNDOS PARA RESPONDER");
+
             cronometro.schedule(encerraCronometro, tempoLimite, TimeUnit.SECONDS);
+            long horaInicioQuestao = System.currentTimeMillis() / 1000L;
 
             while (!encerraQuestao && tentativas > 0) {
-                System.out.println("TENTATIVA: " + contadorTentativas + "\n");
+                System.out.println("\nTENTATIVAS RESTANTES: " + tentativas);
+
+                long horaAtual = System.currentTimeMillis() / 1000L;
+                long tempoRestante = tempoLimite - (horaAtual - horaInicioQuestao);
+                System.out.println("TEMPO RESTANTE: " + tempoRestante + "\n");
 
                 boolean respostaCorreta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
 
@@ -298,7 +304,6 @@ public class Utils {
                 }
 
                 tentativas--;
-                contadorTentativas++;
             }
         } else {
             System.out.println("\nNÃO EXISTEM MAIS PERGUNTAS AS SEREM FEITAS");
