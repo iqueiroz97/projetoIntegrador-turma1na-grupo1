@@ -9,6 +9,7 @@ public class Utils {
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
     ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
     private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3, alternativaCorretaPergunta4, alternativaCorretaPergunta5;
+    private String enunciado;
     private int posicaoAlternativaCorreta;
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
@@ -45,28 +46,48 @@ public class Utils {
                                   PRESSIONE <ENTER> PARA INICIAR""");
 
         entrada.nextLine();
+        limparTela();
+    }
+
+    //  UTILITÁRIOS
+    public static void limparTela() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                // Comando para Windows
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                // Comando para Unix/Linux/Mac
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     //  INICIALIZAÇÃO
     public void iniciaJogo() {
         if (primeiraExecucaoJogo) {
             banner();
-            mostraMenu();
             primeiraExecucaoJogo = false;
-        } else {
-            mostraMenu();
         }
+
+        mostraMenu();
     }
 
     //  INTERAÇÕES
     public String selecionaOpcao() {
-        System.out.print("\nSELECIONE UMA OPÇÃO: ");
-        return entrada.next().toLowerCase();
+        String opcaoSelecionada;
+
+        do {
+            System.out.print("\nSELECIONE UMA OPÇÃO: ");
+            opcaoSelecionada = entrada.nextLine().toLowerCase();
+        } while (opcaoSelecionada.isEmpty());
+
+        limparTela();
+        return opcaoSelecionada;
     }
 
     public void interacao(String acao) {
-        entrada.nextLine();
-
         if (acao.equalsIgnoreCase("retornar")) {
             System.out.print("\nPRESSIONE <ENTER> PARA RETORNAR");
         } else if (acao.equalsIgnoreCase("prosseguir")) {
@@ -76,6 +97,7 @@ public class Utils {
         }
 
         entrada.nextLine();
+        limparTela();
     }
 
     public int confirmarAcao() {
@@ -145,8 +167,6 @@ public class Utils {
 
     public void jogar() {
         fazPergunta();
-        interacao("prosseguir");
-        System.out.println("\nENCERRANDO PARTIDA...");
     }
 
     //    TODO: Pensar melhor nos créditos
@@ -191,6 +211,17 @@ public class Utils {
     }
 
     public void sair() {
+        System.out.print("""
+                
+                 ::::::::      :::     ::::::::::: ::::::::: \s
+                :+:    :+:   :+: :+:       :+:     :+:    :+:\s
+                +:+         +:+   +:+      +:+     +:+    +:+\s
+                +#++:++#++ +#++:++#++:     +#+     +#++:++#: \s
+                       +#+ +#+     +#+     +#+     +#+    +#+\s
+                #+#    #+# #+#     #+#     #+#     #+#    #+#\s
+                 ########  ###     ### ########### ###    ###\s
+                """);
+
         int confirmaEncerramento;
 
         do {
@@ -278,8 +309,10 @@ public class Utils {
             //  Tarefa para encerrar o cronômetro
             Runnable encerraCronometro = () -> {
                 if (!cronometro.isShutdown()) {
-                    System.out.print("\nTEMPO ESGOTADO! SELECIONE UMA OPÇÃO: ");
                     cronometro.shutdown();
+                    limparTela();
+                    System.out.print("\nTEMPO ESGOTADO!");
+                    interacao("retornar");
                 }
             };
 
@@ -301,6 +334,7 @@ public class Utils {
                     listaPerguntas().remove(0); //  Remove a pergunta da lista de perguntas
                     cronometro.shutdown();
                     encerraQuestao = true;
+                    interacao("prosseguir");
                 }
 
                 tentativas--;
@@ -331,9 +365,11 @@ public class Utils {
     public ArrayList<String> mostraPergunta(ArrayList<String> pergunta) {
         //  Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
         if (pergunta.size() > 5) {
-            System.out.println(pergunta.get(0));
+            enunciado = pergunta.get(0);
             pergunta.remove(0);
         }
+
+        System.out.println(enunciado);
 
         embaralhaLista(pergunta);
 
