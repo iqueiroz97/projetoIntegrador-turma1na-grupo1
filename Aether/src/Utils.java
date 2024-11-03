@@ -48,7 +48,7 @@ public class Utils {
     }
 
     //  INICIALIZAÇÃO
-    public void iniciaJogo() {
+    public void iniciaJogo() throws InterruptedException {
         if (primeiraExecucaoJogo) {
             banner();
             mostraMenu();
@@ -93,7 +93,7 @@ public class Utils {
     }
 
     //  MENU
-    public void mostraMenu() {
+    public void mostraMenu() throws InterruptedException {
         System.out.println("""
                 
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
@@ -115,7 +115,7 @@ public class Utils {
         opcoesMenu(selecionaOpcao());
     }
 
-    public void opcoesMenu(String opcaoSelecionada) {
+    public void opcoesMenu(String opcaoSelecionada) throws InterruptedException {
         switch (opcaoSelecionada) {
             case "1" -> instrucoes();
             case "2" -> jogar();
@@ -143,8 +143,9 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void jogar() {
-        fazPergunta();
+    public void jogar() throws InterruptedException {
+        mostrarOpcoesPersonagens();
+//        fazPergunta();
         interacao("prosseguir");
         System.out.println("\nENCERRANDO PARTIDA...");
     }
@@ -190,7 +191,7 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void sair() {
+    public void sair() throws InterruptedException {
         int confirmaEncerramento;
 
         do {
@@ -472,5 +473,27 @@ public class Utils {
         alternativas.add(this.alternativaCorretaPergunta5);
 
         return alternativas;
+    }
+
+    //  SELEÇÃO DE PESONAGENS
+
+    private void mostrarOpcoesPersonagens() throws InterruptedException {
+        System.out.println("===== Menu do Jogo =====");
+        System.out.println("1 – Arkana Moovit");
+        System.out.println("2 – Jonh Reeve");
+        System.out.println("3 – Voltar");
+        String personagemSelecionado = selecionaOpcao();
+
+        if (personagemSelecionado.equals("1")) {
+            iniciarArkanaMoovit();
+
+        }
+
+    }
+
+    private void iniciarArkanaMoovit() throws InterruptedException {
+        System.out.println("Você escolheu Arkana Moovit .");
+        Thread.sleep(1000);
+        System.out.println("Iniciando com Arkana Moovit...");
     }
 }
