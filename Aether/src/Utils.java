@@ -15,6 +15,7 @@ public class Utils {
     private boolean primeiraExecucaoPartida = true;
     private boolean encerraGame;
     private boolean primeiraExecucaoJogo = true;
+    private String personagemSelecionado;
 
     //  GETTERS
     public boolean getEncerraGame() {
@@ -482,18 +483,27 @@ public class Utils {
         System.out.println("1 – Arkana Moovit");
         System.out.println("2 – Jonh Reeve");
         System.out.println("3 – Voltar");
-        String personagemSelecionado = selecionaOpcao();
+        personagemSelecionado = selecionaOpcao();
 
         if (personagemSelecionado.equals("1")) {
             iniciarArkanaMoovit();
-
         }
-
+        else if (personagemSelecionado.equals("2")) {
+            iniciarJohnReeve();
+        }
     }
 
     private void iniciarArkanaMoovit() throws InterruptedException {
-        System.out.println("Você escolheu Arkana Moovit .");
+        System.out.println("Você escolheu Arkana Moovit.");
         Thread.sleep(1000);
         System.out.println("Iniciando com Arkana Moovit...");
     }
+
+    private void iniciarJohnReeve() throws InterruptedException {
+        System.out.println("Você escolheu John Reeve.");
+        Thread.sleep(1000);
+        System.out.println("Iniciando com John Reeve...");
+    }
 }
+
+
