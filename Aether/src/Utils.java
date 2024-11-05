@@ -31,6 +31,8 @@ public class Utils {
     */
     //    O código morse abaixo do banner diz "Terror no Espaço"
     public void banner() {
+        limparTela();
+
         System.out.print("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
@@ -64,6 +66,26 @@ public class Utils {
         }
     }
 
+    //  TIMER
+    public long timer(int tempoLimiteQuestao, long horaInicioQuestao, int tentativaAtual) {
+        long horaAtual = System.currentTimeMillis() / 1000L; // Hora atual do sistema
+        ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
+
+        //  Tarefa para encerrar o cronômetro
+        Runnable encerraCronometro = () -> {
+            cronometro.shutdown();
+            limparTela();
+            System.out.print("\nTEMPO ESGOTADO!");
+            interacao("retornar");
+        };
+
+        if (tentativaAtual == 3) {
+            cronometro.schedule(encerraCronometro, tempoLimiteQuestao, TimeUnit.SECONDS);
+        }
+
+        return tempoLimiteQuestao - (horaAtual - horaInicioQuestao); // Tempo restante para a questão acabar
+    }
+
     //  INICIALIZAÇÃO
     public void iniciaJogo() {
         if (primeiraExecucaoJogo) {
@@ -84,6 +106,7 @@ public class Utils {
         } while (opcaoSelecionada.isEmpty());
 
         limparTela();
+
         return opcaoSelecionada;
     }
 
@@ -131,18 +154,14 @@ public class Utils {
                 1 - INSTRUÇÕES\r
                 2 - JOGAR\r
                 3 - CRÉDITOS\r
-                4 - ESTATÍSTICAS\r
+                4 - STATUS\r
                 5 - SAIR""");
 
-        opcoesMenu(selecionaOpcao());
-    }
-
-    public void opcoesMenu(String opcaoSelecionada) {
-        switch (opcaoSelecionada) {
+        switch (selecionaOpcao()) {
             case "1" -> instrucoes();
             case "2" -> jogar();
             case "3" -> creditos();
-            case "4" -> estatisticas();
+            case "4" -> status();
             case "5" -> sair();
             default -> System.out.println("\nOPÇÃO INVÁLIDA!");
         }
@@ -161,7 +180,14 @@ public class Utils {
                 ########### ###    ####  ########     ###     ###    ###  ########   ########   ########  ########## ######## \s
                 """);
 
-        System.out.println("\nPara jogar este jogo você deve...");
+        System.out.println("""
+                
+                Responda as perguntas com a alternativa correta antes do tempo acabar,
+                para completar os desafios propostos durante a história do jogo.
+                
+                Para interagir, basta seguir as instruções em tela selecionando a opção
+                de acordo com o que for apresentado.""");
+
         interacao("retornar");
     }
 
@@ -173,13 +199,13 @@ public class Utils {
     public void creditos() {
         System.out.print("""
                 
-                    :::     :::    ::: ::::::::::: ::::::::  :::::::::  :::::::::: :::::::: \s
-                  :+: :+:   :+:    :+:     :+:    :+:    :+: :+:    :+: :+:       :+:    :+:\s
-                 +:+   +:+  +:+    +:+     +:+    +:+    +:+ +:+    +:+ +:+       +:+       \s
-                +#++:++#++: +#+    +:+     +#+    +#+    +:+ +#++:++#:  +#++:++#  +#++:++#++\s
-                +#+     +#+ +#+    +#+     +#+    +#+    +#+ +#+    +#+ +#+              +#+\s
-                #+#     #+# #+#    #+#     #+#    #+#    #+# #+#    #+# #+#       #+#    #+#\s
-                ###     ###  ########      ###     ########  ###    ### ########## ######## \s
+                 ::::::::  :::::::::  :::::::::: ::::::::: ::::::::::: ::::::::::: ::::::::   :::::::: \s
+                :+:    :+: :+:    :+: :+:        :+:    :+:    :+:         :+:    :+:    :+: :+:    :+:\s
+                +:+        +:+    +:+ +:+        +:+    +:+    +:+         +:+    +:+    +:+ +:+       \s
+                +#+        +#++:++#:  +#++:++#   +#+    +:+    +#+         +#+    +#+    +:+ +#++:++#++\s
+                +#+        +#+    +#+ +#+        +#+    +#+    +#+         +#+    +#+    +#+        +#+\s
+                #+#    #+# #+#    #+# #+#        #+#    #+#    #+#         #+#    #+#    #+# #+#    #+#\s
+                 ########  ###    ### ########## ######### ###########     ###     ########   ######## \s
                 """);
 
         System.out.println("""
@@ -192,16 +218,16 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void estatisticas() {
+    public void status() {
         System.out.print("""
                 
-                :::::::::: :::::::: ::::::::::: ::: ::::::::::: ::::::::::: :::::::: ::::::::::: ::::::::::: ::::::::      :::      :::::::: \s
-                :+:       :+:    :+:    :+:   :+: :+:   :+:         :+:    :+:    :+:    :+:         :+:    :+:    :+:   :+: :+:   :+:    :+:\s
-                +:+       +:+           +:+  +:+   +:+  +:+         +:+    +:+           +:+         +:+    +:+         +:+   +:+  +:+       \s
-                +#++:++#  +#++:++#++    +#+ +#++:++#++: +#+         +#+    +#++:++#++    +#+         +#+    +#+        +#++:++#++: +#++:++#++\s
-                +#+              +#+    +#+ +#+     +#+ +#+         +#+           +#+    +#+         +#+    +#+        +#+     +#+        +#+\s
-                #+#       #+#    #+#    #+# #+#     #+# #+#         #+#    #+#    #+#    #+#         #+#    #+#    #+# #+#     #+# #+#    #+#\s
-                ########## ########     ### ###     ### ###     ########### ########     ###     ########### ########  ###     ###  ######## \s
+                 :::::::: ::::::::::: ::: ::::::::::: :::    :::  :::::::: \s
+                :+:    :+:    :+:   :+: :+:   :+:     :+:    :+: :+:    :+:\s
+                +:+           +:+  +:+   +:+  +:+     +:+    +:+ +:+       \s
+                +#++:++#++    +#+ +#++:++#++: +#+     +#+    +:+ +#++:++#++\s
+                       +#+    +#+ +#+     +#+ +#+     +#+    +#+        +#+\s
+                #+#    #+#    #+# #+#     #+# #+#     #+#    #+# #+#    #+#\s
+                 ########     ### ###     ### ###      ########   ######## \s
                 """);
 
         System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
@@ -229,17 +255,6 @@ public class Utils {
 
             if (confirmaEncerramento == 1) {
                 encerraGame = true;
-
-                System.out.print("""
-                        
-                        :::::::::  :::   ::: ::::::::::\s
-                        :+:    :+: :+:   :+: :+:       \s
-                        +:+    +:+  +:+ +:+  +:+       \s
-                        +#++:++#+    +#++:   +#++:++#  \s
-                        +#+    +#+    +#+    +#+       \s
-                        #+#    #+#    #+#    #+#       \s
-                        #########     ###    ##########\s
-                        """);
             } else if (confirmaEncerramento == 0) {
                 mostraMenu();
             } else {
@@ -300,39 +315,22 @@ public class Utils {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
             int tentativas = 3;
-            int tempoLimite = 30; // Tempo para o jogador responder uma questão (Em segundos)
+            int tempoLimiteQuestao = 60; // Tempo para o jogador responder uma questão (Em segundos)
+            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
 
-            //  TIMER
-            //  Cria um novo cronômetro
-            ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
-
-            //  Tarefa para encerrar o cronômetro
-            Runnable encerraCronometro = () -> {
-                if (!cronometro.isShutdown()) {
-                    cronometro.shutdown();
-                    limparTela();
-                    System.out.print("\nTEMPO ESGOTADO!");
-                    interacao("retornar");
-                }
-            };
-
-            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimite + " SEGUNDOS PARA RESPONDER");
-
-            cronometro.schedule(encerraCronometro, tempoLimite, TimeUnit.SECONDS);
-            long horaInicioQuestao = System.currentTimeMillis() / 1000L;
+            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS " +
+                    "PARA RESPONDER\nA QUESTÃO. CASO CONTRÁRIO, O BANCO DE DADOS IRÁ COLAPSAR");
 
             while (!encerraQuestao && tentativas > 0) {
-                System.out.println("\nTENTATIVAS RESTANTES: " + tentativas);
+                long tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao, tentativas);
 
-                long horaAtual = System.currentTimeMillis() / 1000L;
-                long tempoRestante = tempoLimite - (horaAtual - horaInicioQuestao);
+                System.out.println("\nTENTATIVAS RESTANTES: " + tentativas);
                 System.out.println("TEMPO RESTANTE: " + tempoRestante + "\n");
 
                 boolean respostaCorreta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
 
-                if (respostaCorreta || cronometro.isShutdown()) {
+                if (respostaCorreta || tempoRestante == 0) {
                     listaPerguntas().remove(0); //  Remove a pergunta da lista de perguntas
-                    cronometro.shutdown();
                     encerraQuestao = true;
                     interacao("prosseguir");
                 }
@@ -340,7 +338,8 @@ public class Utils {
                 tentativas--;
             }
         } else {
-            System.out.println("\nNÃO EXISTEM MAIS PERGUNTAS AS SEREM FEITAS");
+            System.out.println("\nBANCO DE DADOS ESTÁVEL");
+            interacao("prosseguir");
         }
     }
 
@@ -369,7 +368,7 @@ public class Utils {
             pergunta.remove(0);
         }
 
-        System.out.println(enunciado);
+        System.out.println("AURA: " + enunciado);
 
         embaralhaLista(pergunta);
 
