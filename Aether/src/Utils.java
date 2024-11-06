@@ -1,7 +1,4 @@
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Utils {
     //  VARIÁVEIS E OBJETOS
@@ -48,11 +45,10 @@ public class Utils {
                                   PRESSIONE <ENTER> PARA INICIAR""");
 
         entrada.nextLine();
-        limparTela();
     }
 
     //  UTILITÁRIOS
-    public static void limparTela() {
+    public void limparTela() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 // Comando para Windows
@@ -67,23 +63,10 @@ public class Utils {
     }
 
     //  TIMER
-    public long timer(int tempoLimiteQuestao, long horaInicioQuestao, int tentativaAtual) {
+    public long timer(int tempoLimiteQuestao, long horaInicioQuestao) {
         long horaAtual = System.currentTimeMillis() / 1000L; // Hora atual do sistema
-        ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
-
-        //  Tarefa para encerrar o cronômetro
-        Runnable encerraCronometro = () -> {
-            cronometro.shutdown();
-            limparTela();
-            System.out.print("\nTEMPO ESGOTADO!");
-            interacao("retornar");
-        };
-
-        if (tentativaAtual == 3) {
-            cronometro.schedule(encerraCronometro, tempoLimiteQuestao, TimeUnit.SECONDS);
-        }
-
-        return tempoLimiteQuestao - (horaAtual - horaInicioQuestao); // Tempo restante para a questão acabar
+        // Tempo restante para a questão acabar
+        return tempoLimiteQuestao - (horaAtual - horaInicioQuestao);
     }
 
     //  INICIALIZAÇÃO
@@ -139,6 +122,8 @@ public class Utils {
 
     //  MENU
     public void mostraMenu() {
+        limparTela();
+
         System.out.println("""
                 
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
@@ -182,8 +167,10 @@ public class Utils {
 
         System.out.println("""
                 
-                Responda as perguntas com a alternativa correta antes do tempo acabar,
+                Responda as perguntas com a alternativa correta antes do tempo acabar
                 para completar os desafios propostos durante a história do jogo.
+                
+                Interaja com a IA AURA para para resolver os desafios.
                 
                 Para interagir, basta seguir as instruções em tela selecionando a opção
                 de acordo com o que for apresentado.""");
@@ -264,12 +251,13 @@ public class Utils {
     }
 
     //    ALEATORIEDADE
-    public void embaralhaLista(Object lista) {
+    //  Embaralha listas de perguntas e alternativas
+    public void embaralha(Object lista) {
         Collections.shuffle((List<?>) lista);
     }
 
     //  VALIDAÇÃO
-    public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador) {
+    public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador, long tempoRestantePergunta) {
         //  Checa a posição da alternativa correta na pergunta atual
         for (int i = 0; i < pergunta.size(); i++) {
             if (pergunta.get(i).equals(alternativaCorretaPergunta1)) {
@@ -296,7 +284,7 @@ public class Utils {
         };
 
         // Compara a posição da alternativa correta com a posição da resposta do jogador
-        if (posicaoAlternativaCorreta == posicaoRespostaJogador) {
+        if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
             contadorRespostaCorreta += 1;
             System.out.println("\nRESPOSTA CORRETA!");
             return true;
@@ -315,32 +303,46 @@ public class Utils {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
             int tentativas = 3;
-            int tempoLimiteQuestao = 60; // Tempo para o jogador responder uma questão (Em segundos)
+            int tempoLimiteQuestao = 20; // Tempo para o jogador responder uma questão (Em segundos)
             long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
 
-            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS " +
-                    "PARA RESPONDER\nA QUESTÃO. CASO CONTRÁRIO, O BANCO DE DADOS IRÁ COLAPSAR");
+            System.out.println("\nBANCO DE DADOS INSTÁVEL!\n\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS " +
+                    "PARA RESPONDER A QUESTÃO.\nCASO CONTRÁRIO, UMA PARTIÇÃO DO BANCO DE DADOS IRÁ CORROMPER...");
 
-            while (!encerraQuestao && tentativas > 0) {
-                long tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao, tentativas);
+            //  Inicia o cronômetro
+            long tempoRestante = tempoLimiteQuestao;
 
-                System.out.println("\nTENTATIVAS RESTANTES: " + tentativas);
-                System.out.println("TEMPO RESTANTE: " + tempoRestante + "\n");
+            while ((tempoRestante > 0 && tentativas > 0) && !encerraQuestao) {
+                tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
+                boolean respostaCorreta;
+                String respostaJogador;
 
-                boolean respostaCorreta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
+                System.out.println("\nTEMPO RESTANTE: " + tempoRestante);
+                System.out.println("TENTATIVAS RESTANTES: " + tentativas + "\n");
 
-                if (respostaCorreta || tempoRestante == 0) {
-                    listaPerguntas().remove(0); //  Remove a pergunta da lista de perguntas
-                    encerraQuestao = true;
-                    interacao("prosseguir");
+                ArrayList<String> perguntaAtual = mostraPergunta(listaPerguntas().get(0));
+
+                if (tempoRestante < 1) {
+                    limparTela();
+                    System.out.print("\nTEMPO ESGOTADO!\n");
+                } else {
+                    respostaJogador = selecionaOpcao();
+                    respostaCorreta = validaResposta(perguntaAtual, respostaJogador);
+
+                    if (respostaCorreta || tentativas == 1) {
+                        if (respostaCorreta) {
+                            System.out.println("\nBANCO DE DADOS ESTABILIZADO...");
+                        }
+                        listaPerguntas().remove(0); //  Remove a pergunta atual da lista de perguntas
+                        encerraQuestao = true;
+                    }
                 }
-
                 tentativas--;
             }
         } else {
             System.out.println("\nBANCO DE DADOS ESTÁVEL");
-            interacao("prosseguir");
         }
+        interacao("prosseguir");
     }
 
     //    Entrega a lista de perguntas de forma embaralhada
@@ -352,7 +354,7 @@ public class Utils {
             perguntas.add(pergunta4());
             perguntas.add(pergunta5());
 
-            embaralhaLista(perguntas);
+            embaralha(perguntas);
 
             primeiraExecucaoPartida = false;
         }
@@ -361,23 +363,25 @@ public class Utils {
     }
 
     //  Mostra a pergunta com as alternativas embaralhadas
-    public ArrayList<String> mostraPergunta(ArrayList<String> pergunta) {
+    public ArrayList<String> mostraPergunta(ArrayList<String> perguntaAtual) {
+        int QUANTIDADE_PERGUNTAS = 5;
+
         //  Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
-        if (pergunta.size() > 5) {
-            enunciado = pergunta.get(0);
-            pergunta.remove(0);
+        if (perguntaAtual.size() > QUANTIDADE_PERGUNTAS) {
+            enunciado = perguntaAtual.get(0);
+            perguntaAtual.remove(0);
         }
 
         System.out.println("AURA: " + enunciado);
 
-        embaralhaLista(pergunta);
+        embaralha(perguntaAtual);
 
         //  Mostra a lista de alternativas, onde as opções de "a" até "e" ficam fixas
-        for (int i = 0; i < pergunta.size(); i++) {
-            System.out.println(opcoes[i] + pergunta.get(i));
+        for (int i = 0; i < perguntaAtual.size(); i++) {
+            System.out.println(opcoes[i] + perguntaAtual.get(i));
         }
 
-        return pergunta;
+        return perguntaAtual;
     }
 
     //    Questionário Banco de Dados (Relacionamento)
