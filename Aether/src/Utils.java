@@ -258,6 +258,7 @@ public class Utils {
 
     //  VALIDAÇÃO
     public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador, long tempoRestantePergunta) {
+        //  TODO: Pensar numa solução alternativa com array
         //  Checa a posição da alternativa correta na pergunta atual
         for (int i = 0; i < pergunta.size(); i++) {
             if (pergunta.get(i).equals(alternativaCorretaPergunta1)) {
@@ -283,6 +284,7 @@ public class Utils {
             default -> -1;
         };
 
+        //  TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
         // Compara a posição da alternativa correta com a posição da resposta do jogador
         if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
             contadorRespostaCorreta += 1;
@@ -327,7 +329,7 @@ public class Utils {
                     System.out.print("\nTEMPO ESGOTADO!\n");
                 } else {
                     respostaJogador = selecionaOpcao();
-                    respostaCorreta = validaResposta(perguntaAtual, respostaJogador);
+                    respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
 
                     if (respostaCorreta || tentativas == 1) {
                         if (respostaCorreta) {
