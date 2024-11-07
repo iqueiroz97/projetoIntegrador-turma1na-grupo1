@@ -3,7 +3,7 @@ import java.util.*;
 public class Utils {
     // VARIÁVEIS E OBJETOS
     Scanner entrada = new Scanner(System.in);
-    private final String[] opcoes = { "a) ", "b) ", "c) ", "d) ", "e) " };
+    private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
     ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
     private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3,
             alternativaCorretaPergunta4, alternativaCorretaPergunta5;
@@ -33,7 +33,7 @@ public class Utils {
         limparTela();
 
         System.out.print("""
-
+                
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
                        :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:\s
                      +:+   +:+  +:+            +:+     +:+    +:+ +:+        +:+    +:+ \s
@@ -118,7 +118,7 @@ public class Utils {
 
     public int confirmarAcao() {
         System.out.print("""
-
+                
                 DESEJA CONFIRMAR A AÇÃO?\s
                        (S)  (N)         \s
                 """);
@@ -135,7 +135,7 @@ public class Utils {
         limparTela();
 
         System.out.println("""
-
+                
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
                 +:+:+: :+:+:+ :+:        :+:+:   :+: :+:    :+:\s
                 +:+ +:+:+ +:+ +:+        :+:+:+  +:+ +:+    +:+\s
@@ -166,7 +166,7 @@ public class Utils {
     public void instrucoes() {
         System.out
                 .print("""
-
+                        
                         ::::::::::: ::::    :::  :::::::: ::::::::::: :::::::::  :::    :::  ::::::::   ::::::::  :::::::::: :::::::: \s
                             :+:     :+:+:   :+: :+:    :+:    :+:     :+:    :+: :+:    :+: :+:    :+: :+:    :+: :+:       :+:    :+:\s
                             +:+     :+:+:+  +:+ +:+           +:+     +:+    +:+ +:+    +:+ +:+        +:+    +:+ +:+       +:+       \s
@@ -177,12 +177,12 @@ public class Utils {
                         """);
 
         System.out.println("""
-
+                
                 Responda as perguntas com a alternativa correta antes do tempo acabar
                 para completar os desafios propostos durante a história do jogo.
-
+                
                 Interaja com a IA AURA para para resolver os desafios.
-
+                
                 Para interagir, basta seguir as instruções em tela selecionando a opção
                 de acordo com o que for apresentado.""");
 
@@ -203,26 +203,26 @@ public class Utils {
         Thread.sleep(500);
 
         printComDelay("""
-                      -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato. 
-                      Por favor, consultem o painel de controle para mais detalhes.""");
+                -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
+                Por favor, consultem o painel de controle para mais detalhes.""");
         Thread.sleep(500);
 
         printComDelay("*****Arkana e John trocam um olhar tenso.******* ");
         Thread.sleep(500);
 
         printComDelay("""
-                      -Eu vou cuidar da parte externa John! Fa\u00e7a os reparos necessarios aqui dentro.
-                      ****disse Arkana.""");
+                -Eu vou cuidar da parte externa John! Faça os reparos necessarios aqui dentro.
+                ****disse Arkana.""");
         Thread.sleep(500);
 
         printComDelay("""
-                      -Pode deixar, eu dou que eu dou conta!
-                      *****disse John""");
+                -Pode deixar, eu dou que eu dou conta!
+                *****disse John""");
         Thread.sleep(500);
 
         printComDelay("""
-                      Assim, com cada um assumindo a responsabilidade por uma parte da nave: Arkana lida com o exterior,
-                      enquanto John trabalha nos sistemas internos. Eles escolhem suas respectivas fun\u00e7\u00f5es e come\u00e7am suas jornadas individuais de reparo.""");
+                Assim, com cada um assumindo a responsabilidade por uma parte da nave: Arkana lida com o exterior,
+                enquanto John trabalha nos sistemas internos. Eles escolhem suas respectivas funções e começam suas jornadas individuais de reparo.""");
         Thread.sleep(500);
 
         mostrarOpcoesPersonagens();
@@ -232,7 +232,7 @@ public class Utils {
     // TODO: Pensar melhor nos créditos
     public void creditos() {
         System.out.print("""
-
+                
                  ::::::::  :::::::::  :::::::::: ::::::::: ::::::::::: ::::::::::: ::::::::   :::::::: \s
                 :+:    :+: :+:    :+: :+:        :+:    :+:    :+:         :+:    :+:    :+: :+:    :+:\s
                 +:+        +:+    +:+ +:+        +:+    +:+    +:+         +:+    +:+    +:+ +:+       \s
@@ -243,7 +243,7 @@ public class Utils {
                 """);
 
         System.out.println("""
-
+                
                 Breno Rios\r
                 Igor Queiroz\r
                 Lucas Serafim\r
@@ -254,7 +254,7 @@ public class Utils {
 
     public void status() {
         System.out.print("""
-
+                
                  :::::::: ::::::::::: ::: ::::::::::: :::    :::  :::::::: \s
                 :+:    :+:    :+:   :+: :+:   :+:     :+:    :+: :+:    :+:\s
                 +:+           +:+  +:+   +:+  +:+     +:+    +:+ +:+       \s
@@ -272,7 +272,7 @@ public class Utils {
 
     public void sair() throws InterruptedException {
         System.out.print("""
-
+                
                  ::::::::      :::     ::::::::::: ::::::::: \s
                 :+:    :+:   :+: :+:       :+:     :+:    :+:\s
                 +:+         +:+   +:+      +:+     +:+    +:+\s
@@ -587,15 +587,48 @@ public class Utils {
     }
 
     private void iniciarArkanaMoovit() throws InterruptedException {
+
+        String funcao = "Especialista em Ecossistemas";
+        int estamina = 10;
+        int inteligencia = 9;
+        int habilidades = 6;
+        int forca = 8;
+
         System.out.println("Você escolheu Arkana Moovit.");
         Thread.sleep(1000);
         System.out.println("Iniciando com Arkana Moovit...");
+
+        System.out.println("Função: " + funcao);
+        System.out.println("Nível de estamina: " + estamina);
+        System.out.println("Nível de inteligência: " + inteligencia);
+        System.out.println("Nível de habilidades: " + habilidades);
+        System.out.println("Nível de força: " + forca);
+        System.out.println();
+        interacao("prosseguir");
+
+
     }
 
     private void iniciarJohnReeve() throws InterruptedException {
+        String funcao = "Astronauta formado em ciência da computação através da aeronáutica, especialista em análise de dados e decifração de padrões extraterrestres";
+        int estamina = 10;
+        int inteligencia = 10;
+        int habilidades = 7;
+        int forca = 6;
+
         System.out.println("Você escolheu John Reeve.");
         Thread.sleep(1000);
         System.out.println("Iniciando com John Reeve...");
+
+
+        System.out.println("Função: " + funcao);
+        System.out.println("Nível de estamina: " + estamina);
+        System.out.println("Nível de inteligência: " + inteligencia);
+        System.out.println("Nível de habilidades: " + habilidades);
+        System.out.println("Nível de força: " + forca);
+        System.out.println();
+        interacao("prosseguir");
+
     }
 }
 
