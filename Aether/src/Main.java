@@ -1,12 +1,10 @@
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Utils utils = new Utils();
 
-        utils.banner();
-        System.out.println("hellow");    
-
         do {
-            utils.mostraMenu();
-        } while (utils.getEncerraGame() != 5);
+            utils.iniciaJogo();
+        } while (!utils.getEncerraGame());
     }
+
 }
