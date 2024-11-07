@@ -79,7 +79,7 @@ public class Utils {
     }
 
     //  INICIALIZAÇÃO
-    public void iniciaJogo() {
+    public void iniciaJogo() throws InterruptedException {
         if (primeiraExecucaoJogo) {
             banner();
             primeiraExecucaoJogo = false;
@@ -130,7 +130,7 @@ public class Utils {
     }
 
     //  MENU
-    public void mostraMenu() {
+    public void mostraMenu() throws InterruptedException {
         limparTela();
 
         System.out.println("""
@@ -187,7 +187,37 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void jogar() {
+    public void jogar() throws InterruptedException {
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        System.out.println();
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("#### Cena Inicial ####");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("======= O ano e 3129. \n"
+                + "Arkana Moovit e John Reeves estao a caminho de Nahum na nave **AETHER**, \n"
+                + "com a missao de coletar a planta **Sansevieria**. Durante a viagem, porem, um subito problema atinge os sistemas da nave, \n"
+                + "desencadeando uma serie de falhas. A voz da IA da nave, **AURA**, ecoa pela cabine:");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("-Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato. \n"
+                + "Por favor, consultem o painel de controle para mais detalhes.");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+       printComDelay("*****Arkana e John trocam um olhar tenso.******* ");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("-Eu vou cuidar da parte externa John! Faça os reparos necessarios aqui dentro.\n"
+                + "****disse Arkana.");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("-Pode deixar, eu dou que eu dou conta!\n"
+                + "*****disse John");
+        Thread.sleep(500);
+        printComDelay("EMERGENCIA NA NAVE AETHER.....");
+        printComDelay("Assim, com cada um assumindo a responsabilidade por uma parte da nave: Arkana lida com o exterior,\n"
+                + "enquanto John trabalha nos sistemas internos. Eles escolhem suas respectivas funções e começam suas jornadas individuais de reparo.");
+        Thread.sleep(500);
         fazPergunta();
     }
 
@@ -232,7 +262,7 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void sair() {
+    public void sair() throws InterruptedException {
         System.out.print("""
                 
                  ::::::::      :::     ::::::::::: ::::::::: \s
