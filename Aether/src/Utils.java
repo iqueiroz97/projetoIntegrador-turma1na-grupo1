@@ -189,36 +189,40 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void jogar() throws InterruptedException throws InterruptedException {
+    public void jogar() throws InterruptedException {
 
         printComDelay("EMERGENCIA NA NAVE AETHER.....");
         printComDelay("#### Capitulo I ####");
         Thread.sleep(500);
         printComDelay("EMERGENCIA NA NAVE AETHER.....");
-        printComDelay("======= O ano e 3129. \n"
-                + "Arkana Moovit e John Reeves estao a caminho de Nahum na nave **AETHER**, \n"
-                + "com a missao de coletar a planta **Sansevieria**. Durante a viagem, porem, um subito problema atinge os sistemas da nave, \n"
-                + "desencadeando uma serie de falhas. A voz da IA da nave, **AURA**, ecoa pela cabine:");
+        printComDelay("""
+                ======= O ano e 3129.
+                Arkana Moovit e John Reeves estao a caminho de Nahum na nave **AETHER**,\s
+                com a missao de coletar a planta **Sansevieria**. Durante a viagem, porem, um subito problema atinge os sistemas da nave,\s
+                desencadeando uma serie de falhas. A voz da IA da nave, **AURA**, ecoa pela cabine:""");
         Thread.sleep(500);
 
-        printComDelay("-Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato. \n"
-                + "Por favor, consultem o painel de controle para mais detalhes.");
+        printComDelay("""
+                      -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato. 
+                      Por favor, consultem o painel de controle para mais detalhes.""");
         Thread.sleep(500);
 
         printComDelay("*****Arkana e John trocam um olhar tenso.******* ");
         Thread.sleep(500);
 
-        printComDelay("-Eu vou cuidar da parte externa John! Faça os reparos necessarios aqui dentro.\n"
-                + "****disse Arkana.");
+        printComDelay("""
+                      -Eu vou cuidar da parte externa John! Fa\u00e7a os reparos necessarios aqui dentro.
+                      ****disse Arkana.""");
         Thread.sleep(500);
 
-        printComDelay("-Pode deixar, eu dou que eu dou conta!\n"
-                + "*****disse John");
+        printComDelay("""
+                      -Pode deixar, eu dou que eu dou conta!
+                      *****disse John""");
         Thread.sleep(500);
 
-        printComDelay(
-                "Assim, com cada um assumindo a responsabilidade por uma parte da nave: Arkana lida com o exterior,\n"
-                        + "enquanto John trabalha nos sistemas internos. Eles escolhem suas respectivas funções e começam suas jornadas individuais de reparo.");
+        printComDelay("""
+                      Assim, com cada um assumindo a responsabilidade por uma parte da nave: Arkana lida com o exterior,
+                      enquanto John trabalha nos sistemas internos. Eles escolhem suas respectivas fun\u00e7\u00f5es e come\u00e7am suas jornadas individuais de reparo.""");
         Thread.sleep(500);
 
         mostrarOpcoesPersonagens();
@@ -569,11 +573,16 @@ public class Utils {
         System.out.println("3 – Voltar");
         personagemSelecionado = selecionaOpcao();
 
-        if (personagemSelecionado.equals("1")) {
-            iniciarArkanaMoovit();
-        }
-        else if (personagemSelecionado.equals("2")) {
-            iniciarJohnReeve();
+        switch (personagemSelecionado) {
+            case "1":
+                iniciarArkanaMoovit();
+                break;
+            case "2":
+                iniciarJohnReeve();
+                break;
+            case "3":
+                interacao("retornar");
+                break;
         }
     }
 
