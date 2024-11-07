@@ -62,6 +62,15 @@ public class Utils {
         }
     }
 
+    public void printComDelay(String texto) throws InterruptedException {
+        for (int i = 0; i < texto.length(); i++) {
+            System.out.print(texto.charAt(i));
+            Thread.sleep(30); // Ajuste o valor para mais rápido ou mais devagar
+        }
+        System.out.println();
+    }
+
+
     //  TIMER
     public long timer(int tempoLimiteQuestao, long horaInicioQuestao) {
         long horaAtual = System.currentTimeMillis() / 1000L; // Hora atual do sistema
