@@ -1,36 +1,44 @@
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Utils {
-    //  VARIÁVEIS E OBJETOS
+    // VARIÁVEIS E OBJETOS
     Scanner entrada = new Scanner(System.in);
+
+    // RELACIONADOS A PERGUNTAS
     private final String[] opcoes = {"a) ", "b) ", "c) ", "d) ", "e) "};
     ArrayList<ArrayList<String>> perguntas = new ArrayList<>();
-    private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3, alternativaCorretaPergunta4, alternativaCorretaPergunta5;
+    private String enunciado;
+    ArrayList<String> alternativasCorretas = new ArrayList<>();
+    private String alternativaCorretaPergunta1, alternativaCorretaPergunta2, alternativaCorretaPergunta3,
+            alternativaCorretaPergunta4, alternativaCorretaPergunta5;
     private int posicaoAlternativaCorreta;
+
+    // RELACIONADOS A ESTATÍSTICAS
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
+
+    // CONTROLADORES
+    private boolean primeiraExecucaoJogo = true;
     private boolean primeiraExecucaoPartida = true;
     private boolean encerraGame;
-    private boolean primeiraExecucaoJogo = true;
 
-    //  GETTERS
+    // GETTERS
     public boolean getEncerraGame() {
         return encerraGame;
     }
 
-    //    BANNER
-    //    https://manytools.org/hacker-tools/ascii-banner/
-    //    Fonte: Alligator
+    // BANNER
+    // https://manytools.org/hacker-tools/ascii-banner/
+    // Fonte: Alligator
     /*
-        Alligator by Simon Bradley <syb3@aber.ac.uk>
-        17th June, 1994
-    */
-    //    O código morse abaixo do banner diz "Terror no Espaço"
+     * Alligator by Simon Bradley <syb3@aber.ac.uk>
+     * 17th June, 1994
+     */
+    // O código morse abaixo do banner diz "Terror no Espaço"
     public void banner() {
-        System.out.print("""
+        limparTela();
+
+        printComDelay("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
                        :+: :+:   :+:            :+:     :+:    :+: :+:        :+:    :+:\s
@@ -42,31 +50,78 @@ public class Utils {
                                                                                         \s
                         - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---         \s
                                                                                         \s
-                                  PRESSIONE <ENTER> PARA INICIAR""");
+                                  PRESSIONE <ENTER> PARA INICIAR""", true, 2);
 
         entrada.nextLine();
     }
 
-    //  INICIALIZAÇÃO
-    public void iniciaJogo() {
-        if (primeiraExecucaoJogo) {
-            banner();
-            mostraMenu();
-            primeiraExecucaoJogo = false;
-        } else {
-            mostraMenu();
+    // UTILITÁRIOS
+    public void limparTela() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                // Comando para Windows
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                // Comando para Unix/Linux/Mac
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception ignored) {
         }
     }
 
-    //  INTERAÇÕES
+    public void printComDelay(String texto, boolean pulaLinha, int tempo) {
+        // Ajustar o tempo para imprimir mais rápido ou mais devagar
+        for (int i = 0; i < texto.length(); i++) {
+            System.out.print(texto.charAt(i));
+            pausa(tempo);
+        }
+
+        if (pulaLinha) {
+            System.out.println();
+        }
+    }
+
+    public void pausa(int tempo) {
+        try {
+            Thread.sleep(tempo);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // TIMER
+    public long timer(int tempoLimiteQuestao, long horaInicioQuestao) {
+        long horaAtual = System.currentTimeMillis() / 1000L; // Hora atual do sistema
+        // Tempo restante para a questão acabar
+        return tempoLimiteQuestao - (horaAtual - horaInicioQuestao);
+    }
+
+    // INICIALIZAÇÃO
+    public void iniciaJogo() {
+        if (primeiraExecucaoJogo) {
+            banner();
+            primeiraExecucaoJogo = false;
+        }
+
+        mostraMenu();
+    }
+
+    // INTERAÇÕES
     public String selecionaOpcao() {
-        System.out.print("\nSELECIONE UMA OPÇÃO: ");
-        return entrada.next().toLowerCase();
+        String opcaoSelecionada;
+
+        do {
+            System.out.print("\nSELECIONE UMA OPÇÃO: ");
+            opcaoSelecionada = entrada.nextLine().toLowerCase();
+        } while (opcaoSelecionada.isEmpty());
+
+        limparTela();
+
+        return opcaoSelecionada;
     }
 
     public void interacao(String acao) {
-        entrada.nextLine();
-
         if (acao.equalsIgnoreCase("retornar")) {
             System.out.print("\nPRESSIONE <ENTER> PARA RETORNAR");
         } else if (acao.equalsIgnoreCase("prosseguir")) {
@@ -76,6 +131,7 @@ public class Utils {
         }
 
         entrada.nextLine();
+        limparTela();
     }
 
     public int confirmarAcao() {
@@ -92,9 +148,11 @@ public class Utils {
         };
     }
 
-    //  MENU
+    // MENU
     public void mostraMenu() {
-        System.out.println("""
+        limparTela();
+
+        printComDelay("""
                 
                 ::::    ::::  :::::::::: ::::    ::: :::    :::\s
                 +:+:+: :+:+:+ :+:        :+:+:   :+: :+:    :+:\s
@@ -103,32 +161,27 @@ public class Utils {
                 +#+       +#+ +#+        +#+  +#+#+# +#+    +#+\s
                 #+#       #+# #+#        #+#   #+#+# #+#    #+#\s
                 ###       ### ########## ###    ####  ######## \s
-                """);
+                """, true, 1);
 
         System.out.println("""
                 1 - INSTRUÇÕES\r
                 2 - JOGAR\r
                 3 - CRÉDITOS\r
-                4 - ESTATÍSTICAS\r
+                4 - STATUS\r
                 5 - SAIR""");
 
-        opcoesMenu(selecionaOpcao());
-    }
-
-    public void opcoesMenu(String opcaoSelecionada) {
-        switch (opcaoSelecionada) {
+        switch (selecionaOpcao()) {
             case "1" -> instrucoes();
             case "2" -> jogar();
             case "3" -> creditos();
-            case "4" -> estatisticas();
+            case "4" -> status();
             case "5" -> sair();
             default -> System.out.println("\nOPÇÃO INVÁLIDA!");
         }
     }
 
-    //    TODO: Pensar nas instruções do jogo
     public void instrucoes() {
-        System.out.print("""
+        printComDelay("""
                 
                 ::::::::::: ::::    :::  :::::::: ::::::::::: :::::::::  :::    :::  ::::::::   ::::::::  :::::::::: :::::::: \s
                     :+:     :+:+:   :+: :+:    :+:    :+:     :+:    :+: :+:    :+: :+:    :+: :+:    :+: :+:       :+:    :+:\s
@@ -137,30 +190,92 @@ public class Utils {
                     +#+     +#+  +#+#+#        +#+    +#+     +#+    +#+ +#+    +#+ +#+        +#+    +#+ +#+              +#+\s
                     #+#     #+#   #+#+# #+#    #+#    #+#     #+#    #+# #+#    #+# #+#    #+# #+#    #+# #+#       #+#    #+#\s
                 ########### ###    ####  ########     ###     ###    ###  ########   ########   ########  ########## ######## \s
-                """);
+                """, true, 1);
 
-        System.out.println("\nPara jogar este jogo você deve...");
+        System.out.println("""
+                
+                Responda as perguntas com a alternativa correta antes do tempo acabar,
+                para completar os desafios propostos durante a história do jogo.
+                
+                Interaja com a IA, AURA, para para resolver os desafios.
+                
+                Para interagir, basta seguir as instruções em tela selecionando a opção
+                de acordo com o que for apresentado.""");
+
         interacao("retornar");
     }
 
     public void jogar() {
-        fazPergunta();
-        interacao("prosseguir");
-        System.out.println("\nENCERRANDO PARTIDA...");
+        printComDelay("#### CAPÍTULO I ####\n", true, 30);
+
+        pausa(1000);
+
+        printComDelay("EMERGÊNCIA NA NAVE AETHER", false, 30);
+        printComDelay(".....", true, 500);
+
+        printComDelay("""
+                
+                ======= O ano é 3129.
+                Arkana Moovit e John Reeves estão a caminho de Nahum na nave AETHER com a missão de coletar
+                uma amostra da planta SANSEVIERIA. Durante a viagem, porém, um súbito problema atinge os sistemas da nave,
+                desencadeando uma série de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
+                """, true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                -Falha detectada em sistemas principais. Requer-se diagnóstico e reparo imediato.
+                Por favor, consultem o painel de controle para mais detalhes.
+                """, true, 30);
+
+        pausa(500);
+
+        printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                
+                -Eu vou cuidar da parte externa, John! Faça os reparos necessários aqui dentro.
+                ****Disse Arkana.
+                """, true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                -Pode deixar, eu dou conta!
+                *****Disse John""", true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                
+                Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
+                enquanto John trabalha nos sistemas internos.
+                Eles escolhem suas respectivas funções e começam suas jornadas individuais de reparo.""", true, 30);
+
+        pausa(500);
+
+        switch (mostrarOpcoesPersonagens()) {
+            case 1 -> iniciarArkanaMoovit();
+            case 2 -> iniciarJohnReeves();
+            case 3 -> interacao("retornar");
+            default -> interacao("invalido");
+        }
     }
 
-    //    TODO: Pensar melhor nos créditos
+    // TODO: Pensar melhor nos créditos
     public void creditos() {
-        System.out.print("""
+        printComDelay("""
                 
-                    :::     :::    ::: ::::::::::: ::::::::  :::::::::  :::::::::: :::::::: \s
-                  :+: :+:   :+:    :+:     :+:    :+:    :+: :+:    :+: :+:       :+:    :+:\s
-                 +:+   +:+  +:+    +:+     +:+    +:+    +:+ +:+    +:+ +:+       +:+       \s
-                +#++:++#++: +#+    +:+     +#+    +#+    +:+ +#++:++#:  +#++:++#  +#++:++#++\s
-                +#+     +#+ +#+    +#+     +#+    +#+    +#+ +#+    +#+ +#+              +#+\s
-                #+#     #+# #+#    #+#     #+#    #+#    #+# #+#    #+# #+#       #+#    #+#\s
-                ###     ###  ########      ###     ########  ###    ### ########## ######## \s
-                """);
+                 ::::::::  :::::::::  :::::::::: ::::::::: ::::::::::: ::::::::::: ::::::::   :::::::: \s
+                :+:    :+: :+:    :+: :+:        :+:    :+:    :+:         :+:    :+:    :+: :+:    :+:\s
+                +:+        +:+    +:+ +:+        +:+    +:+    +:+         +:+    +:+    +:+ +:+       \s
+                +#+        +#++:++#:  +#++:++#   +#+    +:+    +#+         +#+    +#+    +:+ +#++:++#++\s
+                +#+        +#+    +#+ +#+        +#+    +#+    +#+         +#+    +#+    +#+        +#+\s
+                #+#    #+# #+#    #+# #+#        #+#    #+#    #+#         #+#    #+#    #+# #+#    #+#\s
+                 ########  ###    ### ########## ######### ###########     ###     ########   ######## \s
+                """, true, 1);
 
         System.out.println("""
                 
@@ -172,17 +287,17 @@ public class Utils {
         interacao("retornar");
     }
 
-    public void estatisticas() {
-        System.out.print("""
+    public void status() {
+        printComDelay("""
                 
-                :::::::::: :::::::: ::::::::::: ::: ::::::::::: ::::::::::: :::::::: ::::::::::: ::::::::::: ::::::::      :::      :::::::: \s
-                :+:       :+:    :+:    :+:   :+: :+:   :+:         :+:    :+:    :+:    :+:         :+:    :+:    :+:   :+: :+:   :+:    :+:\s
-                +:+       +:+           +:+  +:+   +:+  +:+         +:+    +:+           +:+         +:+    +:+         +:+   +:+  +:+       \s
-                +#++:++#  +#++:++#++    +#+ +#++:++#++: +#+         +#+    +#++:++#++    +#+         +#+    +#+        +#++:++#++: +#++:++#++\s
-                +#+              +#+    +#+ +#+     +#+ +#+         +#+           +#+    +#+         +#+    +#+        +#+     +#+        +#+\s
-                #+#       #+#    #+#    #+# #+#     #+# #+#         #+#    #+#    #+#    #+#         #+#    #+#    #+# #+#     #+# #+#    #+#\s
-                ########## ########     ### ###     ### ###     ########### ########     ###     ########### ########  ###     ###  ######## \s
-                """);
+                 :::::::: ::::::::::: ::: ::::::::::: :::    :::  :::::::: \s
+                :+:    :+:    :+:   :+: :+:   :+:     :+:    :+: :+:    :+:\s
+                +:+           +:+  +:+   +:+  +:+     +:+    +:+ +:+       \s
+                +#++:++#++    +#+ +#++:++#++: +#+     +#+    +:+ +#++:++#++\s
+                       +#+    +#+ +#+     +#+ +#+     +#+    +#+        +#+\s
+                #+#    #+#    #+# #+#     #+# #+#     #+#    #+# #+#    #+#\s
+                 ########     ### ###     ### ###      ########   ######## \s
+                """, true, 1);
 
         System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
         System.out.println("RESPOSTAS INCORRETAS: " + contadorRespostaIncorreta);
@@ -191,6 +306,17 @@ public class Utils {
     }
 
     public void sair() {
+        printComDelay("""
+                
+                 ::::::::      :::     ::::::::::: ::::::::: \s
+                :+:    :+:   :+: :+:       :+:     :+:    :+:\s
+                +:+         +:+   +:+      +:+     +:+    +:+\s
+                +#++:++#++ +#++:++#++:     +#+     +#++:++#: \s
+                       +#+ +#+     +#+     +#+     +#+    +#+\s
+                #+#    #+# #+#     #+#     #+#     #+#    #+#\s
+                 ########  ###     ### ########### ###    ###\s
+                """, true, 1);
+
         int confirmaEncerramento;
 
         do {
@@ -198,17 +324,6 @@ public class Utils {
 
             if (confirmaEncerramento == 1) {
                 encerraGame = true;
-
-                System.out.print("""
-                        
-                        :::::::::  :::   ::: ::::::::::\s
-                        :+:    :+: :+:   :+: :+:       \s
-                        +:+    +:+  +:+ +:+  +:+       \s
-                        +#++:++#+    +#++:   +#++:++#  \s
-                        +#+    +#+    +#+    +#+       \s
-                        #+#    #+#    #+#    #+#       \s
-                        #########     ###    ##########\s
-                        """);
             } else if (confirmaEncerramento == 0) {
                 mostraMenu();
             } else {
@@ -217,29 +332,24 @@ public class Utils {
         } while (confirmaEncerramento == -1);
     }
 
-    //    ALEATORIEDADE
-    public void embaralhaLista(Object lista) {
+    // ALEATORIEDADE
+    // Embaralha listas de perguntas e alternativas
+    public void embaralha(Object lista) {
         Collections.shuffle((List<?>) lista);
     }
 
-    //  VALIDAÇÃO
-    public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador) {
-        //  Checa a posição da alternativa correta na pergunta atual
-        for (int i = 0; i < pergunta.size(); i++) {
-            if (pergunta.get(i).equals(alternativaCorretaPergunta1)) {
-                posicaoAlternativaCorreta = i;
-            } else if (pergunta.get(i).equals(alternativaCorretaPergunta2)) {
-                posicaoAlternativaCorreta = i;
-            } else if (pergunta.get(i).equals(alternativaCorretaPergunta3)) {
-                posicaoAlternativaCorreta = i;
-            } else if (pergunta.get(i).equals(alternativaCorretaPergunta4)) {
-                posicaoAlternativaCorreta = i;
-            } else if (pergunta.get(i).equals(alternativaCorretaPergunta5)) {
-                posicaoAlternativaCorreta = i;
+    // VALIDAÇÃO
+    public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador, long tempoRestantePergunta) {
+        // Checa a posição da alternativa correta na pergunta atual
+        for (String alternativaCorreta : listaAlternativasCorretas()) {
+            for (String alternativa : pergunta) {
+                if (alternativa.equals(alternativaCorreta)) {
+                    posicaoAlternativaCorreta = pergunta.indexOf(alternativa);
+                }
             }
         }
 
-        //  Checa a posição da resposta do jogador
+        // Checa a posição da resposta do jogador
         int posicaoRespostaJogador = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
@@ -249,68 +359,96 @@ public class Utils {
             default -> -1;
         };
 
+        // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
         // Compara a posição da alternativa correta com a posição da resposta do jogador
-        if (posicaoAlternativaCorreta == posicaoRespostaJogador) {
+        if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
             contadorRespostaCorreta += 1;
-            System.out.println("\nRESPOSTA CORRETA!");
+            printComDelay("\nRESPOSTA CORRETA!", true, 30);
             return true;
         } else if (posicaoRespostaJogador == -1) {
-            System.out.println("\nRESPOSTA INVÁLIDA!");
+            printComDelay("\nRESPOSTA INVÁLIDA!", true, 30);
             return false;
         } else {
             contadorRespostaIncorreta += 1;
-            System.out.println("\nRESPOSTA INCORRETA!");
+            printComDelay("\nRESPOSTA INCORRETA!", true, 30);
             return false;
         }
     }
 
-    //    QUESTÕES
+    // QUESTÕES
     public void fazPergunta() {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
             int tentativas = 3;
-            int tempoLimite = 30; // Tempo para o jogador responder uma questão (Em segundos)
+            int tempoLimiteQuestao = 60; // Tempo para o jogador responder uma questão (Em segundos)
 
-            //  TIMER
-            //  Cria um novo cronômetro
-            ScheduledExecutorService cronometro = Executors.newSingleThreadScheduledExecutor();
+            System.out.println("\nBANCO DE DADOS INSTÁVEL!\n");
+            pausa(500);
+            printComDelay("VOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
+                    "RESPONDER A QUESTÃO.\nCASO CONTRÁRIO, UMA PARTIÇÃO DO BANCO DE DADOS IRÁ CORROMPER", false, 30);
+            printComDelay("...", true, 500);
 
-            //  Tarefa para encerrar o cronômetro
-            Runnable encerraCronometro = () -> {
-                if (!cronometro.isShutdown()) {
-                    System.out.print("\nTEMPO ESGOTADO! SELECIONE UMA OPÇÃO: ");
-                    cronometro.shutdown();
+            // Inicia o cronômetro
+            long tempoRestante = tempoLimiteQuestao;
+            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
+
+            while ((tempoRestante > 0 && tentativas > 0) && !encerraQuestao) {
+                tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
+
+                boolean respostaCorreta;
+                String respostaJogador;
+
+                System.out.println("\nTEMPO RESTANTE: " + tempoRestante);
+                System.out.println("TENTATIVAS RESTANTES: " + tentativas + "\n");
+
+                ArrayList<String> perguntaAtual = listaPerguntas().get(0);
+                mostraPergunta(perguntaAtual);
+
+                if (tempoRestante < 1) {
+                    limparTela();
+                    printComDelay("\nTEMPO ESGOTADO!", true, 30);
+                } else {
+                    respostaJogador = selecionaOpcao();
+                    respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
+
+                    if (respostaCorreta || tentativas == 1) {
+                        if (respostaCorreta) {
+                            printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30);
+                            printComDelay("...", true, 500);
+                        }
+
+                        listaPerguntas().remove(0); // Remove a pergunta atual da lista de perguntas
+                        encerraQuestao = true;
+                    }
                 }
-            };
-
-            System.out.println("\nVOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimite + " SEGUNDOS PARA RESPONDER");
-
-            cronometro.schedule(encerraCronometro, tempoLimite, TimeUnit.SECONDS);
-            long horaInicioQuestao = System.currentTimeMillis() / 1000L;
-
-            while (!encerraQuestao && tentativas > 0) {
-                System.out.println("\nTENTATIVAS RESTANTES: " + tentativas);
-
-                long horaAtual = System.currentTimeMillis() / 1000L;
-                long tempoRestante = tempoLimite - (horaAtual - horaInicioQuestao);
-                System.out.println("TEMPO RESTANTE: " + tempoRestante + "\n");
-
-                boolean respostaCorreta = validaResposta(mostraPergunta(listaPerguntas().get(0)), selecionaOpcao());
-
-                if (respostaCorreta || cronometro.isShutdown()) {
-                    listaPerguntas().remove(0); //  Remove a pergunta da lista de perguntas
-                    cronometro.shutdown();
-                    encerraQuestao = true;
-                }
-
                 tentativas--;
             }
         } else {
-            System.out.println("\nNÃO EXISTEM MAIS PERGUNTAS AS SEREM FEITAS");
+            printComDelay("\nBANCO DE DADOS ESTÁVEL", false, 30);
+        }
+        interacao("prosseguir");
+    }
+
+    // Mostra a pergunta com as alternativas embaralhadas
+    public void mostraPergunta(ArrayList<String> perguntaAtual) {
+        // Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
+        if (perguntaAtual.size() > 5) {
+            enunciado = perguntaAtual.get(0);
+            perguntaAtual.remove(0);
+        }
+
+        printComDelay("AURA: " + enunciado, true, 20);
+
+        embaralha(perguntaAtual);
+
+        // Mostra a lista de alternativas, onde as opções de "a" até "e" ficam fixas
+        for (int i = 0; i < perguntaAtual.size(); i++) {
+            System.out.println(opcoes[i] + perguntaAtual.get(i));
+            pausa(500);
         }
     }
 
-    //    Entrega a lista de perguntas de forma embaralhada
+    // Entrega a lista de perguntas de forma embaralhada
     public ArrayList<ArrayList<String>> listaPerguntas() {
         if (primeiraExecucaoPartida) {
             perguntas.add(pergunta1());
@@ -319,7 +457,7 @@ public class Utils {
             perguntas.add(pergunta4());
             perguntas.add(pergunta5());
 
-            embaralhaLista(perguntas);
+            embaralha(perguntas);
 
             primeiraExecucaoPartida = false;
         }
@@ -327,25 +465,17 @@ public class Utils {
         return perguntas;
     }
 
-    //  Mostra a pergunta com as alternativas embaralhadas
-    public ArrayList<String> mostraPergunta(ArrayList<String> pergunta) {
-        //  Mostra o enunciado da pergunta e depois remove ele do Array "pergunta"
-        if (pergunta.size() > 5) {
-            System.out.println(pergunta.get(0));
-            pergunta.remove(0);
-        }
+    public ArrayList<String> listaAlternativasCorretas() {
+        alternativasCorretas.add(alternativaCorretaPergunta1);
+        alternativasCorretas.add(alternativaCorretaPergunta2);
+        alternativasCorretas.add(alternativaCorretaPergunta3);
+        alternativasCorretas.add(alternativaCorretaPergunta4);
+        alternativasCorretas.add(alternativaCorretaPergunta5);
 
-        embaralhaLista(pergunta);
-
-        //  Mostra a lista de alternativas, onde as opções de "a" até "e" ficam fixas
-        for (int i = 0; i < pergunta.size(); i++) {
-            System.out.println(opcoes[i] + pergunta.get(i));
-        }
-
-        return pergunta;
+        return alternativasCorretas;
     }
 
-    //    Questionário Banco de Dados (Relacionamento)
+    // Questionário Banco de Dados (Relacionamento)
     public ArrayList<String> pergunta1() {
         ArrayList<String> alternativas = new ArrayList<>();
 
@@ -355,13 +485,15 @@ public class Utils {
                 uma entidade?
                 """;
 
-        //  O enunciado inicialmente entra na posição zero do Array
+        // O enunciado inicialmente entra na posição zero do array
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Relacionamento Um-para-Um (1:1)";
         String alternativa2 = "Relacionamento Hierárquico";
         String alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
         String alternativa4 = "Relacionamento Circular";
+
+        // A alternativa correta inicialmente entra na posição cinco do array
         alternativaCorretaPergunta1 = "Relacionamento Um-para-Muitos (1:N)";
 
         alternativas.add(alternativa1);
@@ -472,5 +604,91 @@ public class Utils {
         alternativas.add(this.alternativaCorretaPergunta5);
 
         return alternativas;
+    }
+
+    //  SELEÇÃO DE PESONAGENS
+
+    public int mostrarOpcoesPersonagens() {
+        System.out.println("\n===== ESCOLHA SEU PERSONAGEM =====");
+        System.out.println();
+        System.out.println("1 – Arkana Moovit");
+        System.out.println("2 – John Reeve");
+        System.out.println("3 – Para voltar");
+
+        String personagemSelecionado = selecionaOpcao();
+
+        return switch (personagemSelecionado) {
+            case "1" -> 1;
+            case "2" -> 2;
+            case "3" -> 3;
+            default -> -1;
+        };
+    }
+
+    public void iniciarArkanaMoovit() {
+        String funcao = "Especialista em Ecossistemas";
+        int estamina = 10;
+        int inteligencia = 9;
+        int habilidades = 6;
+        int forca = 8;
+
+        System.out.println("Você escolheu Arkana Moovit\n");
+        pausa(1000);
+        printComDelay("Iniciando com Arkana Moovit", false, 30);
+        printComDelay(".....\n", true, 500);
+
+        mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
+
+        interacao("prosseguir");
+
+        historiaArkanaMoovit();
+    }
+
+    public void historiaArkanaMoovit() {
+        // TODO: Implementar
+    }
+
+    public void iniciarJohnReeves() {
+        String funcao = "Astronauta formado em ciência da computação através da aeronáutica.\nEspecialista em análise" +
+                " de dados e decifração de padrões extraterrestres";
+        int estamina = 10;
+        int inteligencia = 10;
+        int habilidades = 7;
+        int forca = 6;
+
+        System.out.println("Você escolheu John Reeves\n");
+        pausa(1000);
+        printComDelay("Iniciando com John Reeves", false, 30);
+        printComDelay(".....\n", true, 500);
+
+        mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
+
+        interacao("prosseguir");
+
+        historiaJohnReeves();
+    }
+
+    public void historiaJohnReeves() {
+        // TODO: Implementar
+        if (!listaPerguntas().isEmpty()) {
+            for (int i = 1; i <= 5; i++) {
+                fazPergunta();
+            }
+        } else {
+            printComDelay("PROBLEMAS SOLUCIONADOS!", true, 30);
+        }
+    }
+
+    public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
+        System.out.println("Função: " + funcao);
+        pausa(500);
+        System.out.println("Nível de estamina: " + estamina);
+        pausa(500);
+        System.out.println("Nível de inteligência: " + inteligencia);
+        pausa(500);
+        System.out.println("Nível de habilidades: " + habilidades);
+        pausa(500);
+        System.out.println("Nível de força: " + forca);
+        pausa(500);
     }
 }
