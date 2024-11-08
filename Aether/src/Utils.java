@@ -226,7 +226,7 @@ public class Utils {
         Thread.sleep(500);
 
         mostrarOpcoesPersonagens();
-//        fazPergunta();
+        
     }
 
     // TODO: Pensar melhor nos créditos
@@ -567,10 +567,10 @@ public class Utils {
     //  SELEÇÃO DE PESONAGENS
 
     private void mostrarOpcoesPersonagens() throws InterruptedException {
-        System.out.println("===== Menu do Jogo =====");
-        System.out.println("1 – Arkana Moovit");
-        System.out.println("2 – Jonh Reeve");
-        System.out.println("3 – Voltar");
+        printComDelay("===== Menu do Jogo =====");
+        printComDelay("1 – Arkana Moovit");
+        printComDelay("2 – Jonh Reeve");
+        printComDelay("3 – Voltar");
         personagemSelecionado = selecionaOpcao();
 
         switch (personagemSelecionado) {
@@ -588,15 +588,103 @@ public class Utils {
 
     private void iniciarArkanaMoovit() throws InterruptedException {
         System.out.println("Você escolheu Arkana Moovit.");
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         System.out.println("Iniciando com Arkana Moovit...");
-    }
+        Thread.sleep(2000);
+        System.out.println("####Inspecao e Reparo Estrutural####");
+        Thread.sleep(2000);
+        System.out.println("Arkana veste seu traje espacial e sai para o exterior da nave. Enquanto verifica os danos, ela se depara com uma serie de rachaduras no casco, " + 
+                        "\" que parece estar comprometendo a integridade estrutural. Em um ponto, ela encontra um organismo estranho, preso a fuselagem e causando corrosao.");
+        Thread.sleep(2000);
+        System.out.println("-Arkana, detectada falha de estrutura causada por organismo alienigena. Considerando formas de reparo...\\n"+ 
+                        "\"****disse AURA.");
+        Thread.sleep(2000);
+        System.out.println("Nesse momento, uma pergunta de **diagnostico estrutural** surge no visor de Arkana, e ela precisa escolher as respostas certa para prosseguir:");
+        Thread.sleep(2000);
+        
+        fazPergunta();
+        fazPergunta();
+
+        System.out.println("**Encontro e Jornada Final: Missão em Nahum**");
+        Thread.sleep(2000);
+
+        System.out.println("Com os reparos feitos, Arkana e John se reúnem e conseguem seguir para Nahum. Contudo, " + 
+                        "uma última verificação do sistema mostra que a nave ainda possui redundâncias e duplicações de dados nos registros, que precisam ser eliminadas antes de pousarem no planeta.*");
+        Thread.sleep(2000);
+
+        System.out.println("**AURA:** “John, para melhorar a eficiência do sistema e evitar sobrecarga, recomenda-se realizar uma última normalização nos dados.*");
+        Thread.sleep(2000);
+
+        System.out.println("John consulta o painel e é apresentado a uma última pergunta: *");
+        Thread.sleep(2000);
+    
+        fazPergunta();
+
+        System.out.println("**Objetivo Alcançado**");
+        Thread.sleep(2000);
+
+        System.out.println("Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria." + 
+                        " Ao avançarem pela superfície do planeta, percebem que seus esforços e reparos na AETHER foram essenciais para o sucesso da missão," + 
+                        " prontos para enfrentar o próximo desafio juntos.  ");
+        Thread.sleep(2000);
+        }
+        
+
 
     private void iniciarJohnReeve() throws InterruptedException {
-        System.out.println("Você escolheu John Reeve.");
+        printComDelay("Você escolheu John Reeve.");
         Thread.sleep(1000);
-        System.out.println("Iniciando com John Reeve...");
+        printComDelay("Iniciando com John Reeve...");
+        
+        System.out.println("#### Recuperando os Sistemas Internos####");
+        Thread.sleep(2000);
+
+        System.out.println(" Análise do Banco de Dados e Ligação entre Sistemas");
+        Thread.sleep(2000);
+
+        System.out.println("Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa." + 
+                        "\"AURA apresenta uma pergunta para ajudar John a verificar as conexões:");
+        Thread.sleep(2000);
+        
+        fazPergunta();
+
+        System.out.println("John responde corretamente, e AURA orienta restaura a ligação dos dados de navegação. Ele segue as instruções para reparar o sistema e continua com os ajustes internos.");
+        Thread.sleep(2000);
+
+        System.out.println("####**Verificação das Conexões de Energia**####");
+        Thread.sleep(2000);
+        
+        System.out.println("Com o banco de dados de navegação parcialmente restaurado, John agora precisa verificar o sistema de suporte de vida." + 
+                        "\" O painel de controle exibe uma nova pergunta sobre chaves e relacionamentos, que ele deve responder corretamente para prosseguir com o reparo:");
+        Thread.sleep(2000);
+    
+        fazPergunta();
+        
+        System.out.println("**Encontro e Jornada Final: Missão em Nahum**");
+        Thread.sleep(2000);
+
+        System.out.println("Com os reparos feitos, Arkana e John se reúnem e conseguem seguir para Nahum. Contudo, " + 
+                        "uma última verificação do sistema mostra que a nave ainda possui redundâncias e duplicações de dados nos registros, que precisam ser eliminadas antes de pousarem no planeta.*");
+        Thread.sleep(2000);
+
+        System.out.println("**AURA:** “John, para melhorar a eficiência do sistema e evitar sobrecarga, recomenda-se realizar uma última normalização nos dados.*");
+        Thread.sleep(2000);
+
+        System.out.println("John consulta o painel e é apresentado a uma última pergunta: *");
+        Thread.sleep(2000);
+    
+        fazPergunta();
+
+        System.out.println("**Objetivo Alcançado**");
+        Thread.sleep(2000);
+
+        System.out.println("Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria." + 
+                        " Ao avançarem pela superfície do planeta, percebem que seus esforços e reparos na AETHER foram essenciais para o sucesso da missão," + 
+                        " prontos para enfrentar o próximo desafio juntos.  ");
+        Thread.sleep(2000);
     }
+
+    
 }
 
 
