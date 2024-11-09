@@ -13,7 +13,7 @@ public class Utils {
             alternativaCorretaPergunta4, alternativaCorretaPergunta5;
     private int posicaoAlternativaCorreta;
 
-    // RELACIONADOS A ESTATÍSTICAS
+    // RELACIONADOS A ESTATISTICAS
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
 
@@ -34,7 +34,7 @@ public class Utils {
      * Alligator by Simon Bradley <syb3@aber.ac.uk>
      * 17th June, 1994
      */
-    // O código morse abaixo do banner diz "Terror no Espaço"
+    // O código morse abaixo do banner diz "Terror no EspaCo"
     public void banner() {
         limparTela();
 
@@ -97,7 +97,7 @@ public class Utils {
         return tempoLimiteQuestao - (horaAtual - horaInicioQuestao);
     }
 
-    // INICIALIZAÇÃO
+    // INICIALIZACÃO
     public void iniciaJogo() {
         if (primeiraExecucaoJogo) {
             banner();
@@ -107,12 +107,12 @@ public class Utils {
         mostraMenu();
     }
 
-    // INTERAÇÕES
+    // INTERACoES
     public String selecionaOpcao() {
         String opcaoSelecionada;
 
         do {
-            System.out.print("\nSELECIONE UMA OPÇÃO: ");
+            System.out.print("\nSELECIONE UMA OPCAO: ");
             opcaoSelecionada = entrada.nextLine().toLowerCase();
         } while (opcaoSelecionada.isEmpty());
 
@@ -127,7 +127,7 @@ public class Utils {
         } else if (acao.equalsIgnoreCase("prosseguir")) {
             System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
         } else {
-            System.out.print("\nAÇÃO INVÁLIDA!");
+            System.out.print("\nACÃO INVÁLIDA!");
         }
 
         entrada.nextLine();
@@ -137,7 +137,7 @@ public class Utils {
     public int confirmarAcao() {
         System.out.print("""
                 
-                DESEJA CONFIRMAR A AÇÃO?\s
+                DESEJA CONFIRMAR A ACAO?\s
                        (S)  (N)         \s
                 """);
 
@@ -164,9 +164,9 @@ public class Utils {
                 """, true, 1);
 
         System.out.println("""
-                1 - INSTRUÇÕES\r
+                1 - INSTRUCOES\r
                 2 - JOGAR\r
-                3 - CRÉDITOS\r
+                3 - CREDITOS\r
                 4 - STATUS\r
                 5 - SAIR""");
 
@@ -176,7 +176,7 @@ public class Utils {
             case "3" -> creditos();
             case "4" -> status();
             case "5" -> sair();
-            default -> System.out.println("\nOPÇÃO INVÁLIDA!");
+            default -> System.out.println("\nOPCAO INVALIDA!");
         }
     }
 
@@ -199,36 +199,40 @@ public class Utils {
                 
                 Interaja com a IA, AURA, para para resolver os desafios.
                 
-                Para interagir, basta seguir as instruções em tela selecionando a opção
+                Para interagir, basta seguir as instrucoes em tela selecionando a opcao
                 de acordo com o que for apresentado.""");
 
         interacao("retornar");
     }
 
     public void jogar() {
-        printComDelay("#### CAPÍTULO I ####\n", true, 30);
+        printComDelay("#### CAPITULO I ####\n", true, 30);
 
         pausa(1000);
 
-        printComDelay("EMERGÊNCIA NA NAVE AETHER", false, 30);
+        printComDelay("EMERGENCIA NA NAVE AETHER", false, 30);
         printComDelay(".....", true, 500);
 
         printComDelay("""
                 
-                ======= O ano é 3129.
-                Arkana Moovit e John Reeves estão a caminho de Nahum na nave AETHER com a missão de coletar
-                uma amostra da planta SANSEVIERIA. Durante a viagem, porém, um súbito problema atinge os sistemas da nave,
-                desencadeando uma série de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
+                ======= O ano e 3129.
+                Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
+                uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
+                desencadeando uma serie de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
                 """, true, 30);
 
         pausa(500);
 
+        interacao("prosseguir");
+
         printComDelay("""
-                -Falha detectada em sistemas principais. Requer-se diagnóstico e reparo imediato.
+                -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
                 Por favor, consultem o painel de controle para mais detalhes.
                 """, true, 30);
 
         pausa(500);
+
+        interacao("prosseguir");
 
         printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30);
 
@@ -236,7 +240,7 @@ public class Utils {
 
         printComDelay("""
                 
-                -Eu vou cuidar da parte externa, John! Faça os reparos necessários aqui dentro.
+                -Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
                 ****Disse Arkana.
                 """, true, 30);
 
@@ -252,7 +256,7 @@ public class Utils {
                 
                 Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
                 enquanto John trabalha nos sistemas internos.
-                Eles escolhem suas respectivas funções e começam suas jornadas individuais de reparo.""", true, 30);
+                Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""", true, 30);
 
         pausa(500);
 
@@ -264,7 +268,7 @@ public class Utils {
         }
     }
 
-    // TODO: Pensar melhor nos créditos
+    // TODO: Pensar melhor nos crEditos
     public void creditos() {
         printComDelay("""
                 
@@ -327,7 +331,7 @@ public class Utils {
             } else if (confirmaEncerramento == 0) {
                 mostraMenu();
             } else {
-                System.out.println("\nOPÇÃO INVÁLIDA! TENTE NOVAMENTE.");
+                System.out.println("\nOPCAO INVALIDA! TENTE NOVAMENTE.");
             }
         } while (confirmaEncerramento == -1);
     }
@@ -338,9 +342,9 @@ public class Utils {
         Collections.shuffle((List<?>) lista);
     }
 
-    // VALIDAÇÃO
+    // VALIDACÃO
     public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador, long tempoRestantePergunta) {
-        // Checa a posição da alternativa correta na pergunta atual
+        // Checa a posiCão da alternativa correta na pergunta atual
         for (String alternativaCorreta : listaAlternativasCorretas()) {
             for (String alternativa : pergunta) {
                 if (alternativa.equals(alternativaCorreta)) {
@@ -349,7 +353,7 @@ public class Utils {
             }
         }
 
-        // Checa a posição da resposta do jogador
+        // Checa a posiCão da resposta do jogador
         int posicaoRespostaJogador = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
@@ -360,13 +364,13 @@ public class Utils {
         };
 
         // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
-        // Compara a posição da alternativa correta com a posição da resposta do jogador
+        // Compara a posiCão da alternativa correta com a posiCão da resposta do jogador
         if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
             contadorRespostaCorreta += 1;
             printComDelay("\nRESPOSTA CORRETA!", true, 30);
             return true;
         } else if (posicaoRespostaJogador == -1) {
-            printComDelay("\nRESPOSTA INVÁLIDA!", true, 30);
+            printComDelay("\nRESPOSTA INVALIDA!", true, 30);
             return false;
         } else {
             contadorRespostaIncorreta += 1;
@@ -375,22 +379,22 @@ public class Utils {
         }
     }
 
-    // QUESTÕES
+    // QUESToES
     public void fazPergunta() {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
             int tentativas = 3;
             int tempoLimiteQuestao = 60; // Tempo para o jogador responder uma questão (Em segundos)
 
-            System.out.println("\nBANCO DE DADOS INSTÁVEL!\n");
+            System.out.println("\nBANCO DE DADOS INSTAVEL!\n");
             pausa(500);
-            printComDelay("VOCÊ POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
-                    "RESPONDER A QUESTÃO.\nCASO CONTRÁRIO, UMA PARTIÇÃO DO BANCO DE DADOS IRÁ CORROMPER", false, 30);
+            printComDelay("VOCE POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
+                    "RESPONDER A QUESTAO.\nCASO CONTRARIO, UMA PARTICAO DO BANCO DE DADOS IRA CORROMPER", false, 30);
             printComDelay("...", true, 500);
 
             // Inicia o cronômetro
             long tempoRestante = tempoLimiteQuestao;
-            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
+            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de inIcio da questão
 
             while ((tempoRestante > 0 && tentativas > 0) && !encerraQuestao) {
                 tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
@@ -424,7 +428,7 @@ public class Utils {
                 tentativas--;
             }
         } else {
-            printComDelay("\nBANCO DE DADOS ESTÁVEL", false, 30);
+            printComDelay("\nBANCO DE DADOS ESTAVEL", false, 30);
         }
         interacao("prosseguir");
     }
@@ -441,7 +445,7 @@ public class Utils {
 
         embaralha(perguntaAtual);
 
-        // Mostra a lista de alternativas, onde as opções de "a" até "e" ficam fixas
+        // Mostra a lista de alternativas, onde as opCoes de "a" atE "e" ficam fixas
         for (int i = 0; i < perguntaAtual.size(); i++) {
             System.out.println(opcoes[i] + perguntaAtual.get(i));
             pausa(500);
@@ -480,20 +484,20 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                Qual é o tipo de relacionamento onde uma entidade pode estar
-                associada a várias outras, mas essas estão associadas a apenas
+                Qual e o tipo de relacionamento onde uma entidade pode estar
+                associada a varias outras, mas essas estao associadas a apenas
                 uma entidade?
                 """;
 
-        // O enunciado inicialmente entra na posição zero do array
+        // O enunciado inicialmente entra na posiCão zero do array
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Relacionamento Um-para-Um (1:1)";
-        String alternativa2 = "Relacionamento Hierárquico";
+        String alternativa2 = "Relacionamento Hierarquico";
         String alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
         String alternativa4 = "Relacionamento Circular";
 
-        // A alternativa correta inicialmente entra na posição cinco do array
+        // A alternativa correta inicialmente entra na posiCão cinco do array
         alternativaCorretaPergunta1 = "Relacionamento Um-para-Muitos (1:N)";
 
         alternativas.add(alternativa1);
@@ -510,16 +514,16 @@ public class Utils {
 
         String enunciadoPergunta = """
                 Em um relacionamento Muitos-para-Muitos (N:N), como geralmente
-                se implementa a ligação entre as tabelas no banco de dados relacional?
+                se implementa a ligacao entre as tabelas no banco de dados relacional?
                 """;
 
         alternativas.add(enunciadoPergunta);
 
-        String alternativa1 = "Através de uma chave estrangeira simples em cada tabela";
-        String alternativa2 = "Por meio de uma função SQL";
+        String alternativa1 = "Atraves de uma chave estrangeira simples em cada tabela";
+        String alternativa2 = "Por meio de uma funcao SQL";
         String alternativa3 = "Com triggers no banco de dados";
-        String alternativa4 = "Diretamente na cláusula WHERE das consultas";
-        alternativaCorretaPergunta2 = "Usando uma tabela de junção (ou associativa) que contém chaves estrangeiras de" +
+        String alternativa4 = "Diretamente na clausula WHERE das consultas";
+        alternativaCorretaPergunta2 = "Usando uma tabela de juncao (ou associativa) que contem chaves estrangeiras de" +
                 " ambas as tabelas";
 
         alternativas.add(alternativa1);
@@ -540,11 +544,11 @@ public class Utils {
 
         alternativas.add(enunciadoPergunta);
 
-        String alternativa1 = "Uma chave que identifica de forma única um registro na tabela";
-        String alternativa2 = "Um índice que acelera as consultas";
-        String alternativa3 = "Um valor nulo em uma coluna específica";
-        String alternativa4 = "Uma forma de normalização de dados";
-        alternativaCorretaPergunta3 = "Uma coluna ou grupo de colunas que faz referência a uma chave primária em " +
+        String alternativa1 = "Uma chave que identifica de forma unica um registro na tabela";
+        String alternativa2 = "Um indice que acelera as consultas";
+        String alternativa3 = "Um valor nulo em uma coluna especifica";
+        String alternativa4 = "Uma forma de normalizacao de dados";
+        alternativaCorretaPergunta3 = "Uma coluna ou grupo de colunas que faz referencia a uma chave primaria em " +
                 "outra tabela";
 
         alternativas.add(alternativa1);
@@ -560,16 +564,16 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                Qual conceito de normalização elimina a duplicação de dados ao
+                Qual conceito de normalizacao elimina a duplicacao de dados ao
                 garantir que cada atributo de uma tabela dependa unicamente da
-                chave primária?
+                chave primaria?
                 """;
 
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Primeira Forma Normal (1FN)";
         String alternativa2 = "Segunda Forma Normal (2FN)";
-        String alternativa3 = "Forma Não Normal (FNN)";
+        String alternativa3 = "Forma Nao Normal (FNN)";
         String alternativa4 = "Forma Normal de Boyce-Codd (FNBC)";
         alternativaCorretaPergunta4 = "Terceira Forma Normal (3FN)";
 
@@ -586,16 +590,16 @@ public class Utils {
         ArrayList<String> alternativas = new ArrayList<>();
 
         String enunciadoPergunta = """
-                Qual das opções abaixo é um exemplo de relacionamento Um-para-Um (1:1)?
+                Qual das opcoes abaixo E um exemplo de relacionamento Um-para-Um (1:1)?
                 """;
 
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Um autor e seus livros";
-        String alternativa2 = "Um país e suas cidades";
+        String alternativa2 = "Um pais e suas cidades";
         String alternativa3 = "Um aluno e seus cursos";
         String alternativa4 = "Um pedido e seus produtos";
-        alternativaCorretaPergunta5 = "Um número de identificação de cidadão e o próprio cidadão";
+        alternativaCorretaPergunta5 = "Um numero de identificacao de cidadao e o proprio cidadao";
 
         alternativas.add(alternativa1);
         alternativas.add(alternativa2);
@@ -606,14 +610,14 @@ public class Utils {
         return alternativas;
     }
 
-    //  SELEÇÃO DE PESONAGENS
+    //  SELECÃO DE PESONAGENS
 
     public int mostrarOpcoesPersonagens() {
         System.out.println("\n===== ESCOLHA SEU PERSONAGEM =====");
         System.out.println();
-        System.out.println("1 – Arkana Moovit");
-        System.out.println("2 – John Reeve");
-        System.out.println("3 – Para voltar");
+        System.out.println("1 - Arkana Moovit");
+        System.out.println("2 - John Reeve");
+        System.out.println("3 - Para voltar");
 
         String personagemSelecionado = selecionaOpcao();
 
@@ -632,7 +636,7 @@ public class Utils {
         int habilidades = 6;
         int forca = 8;
 
-        System.out.println("Você escolheu Arkana Moovit\n");
+        System.out.println("Voce escolheu Arkana Moovit\n");
         pausa(1000);
         printComDelay("Iniciando com Arkana Moovit", false, 30);
         printComDelay(".....\n", true, 500);
@@ -649,14 +653,15 @@ public class Utils {
     }
 
     public void iniciarJohnReeves() {
-        String funcao = "Astronauta formado em ciência da computação através da aeronáutica.\nEspecialista em análise" +
-                " de dados e decifração de padrões extraterrestres";
+        String funcao = "Astronauta formado em ciencia da computacao atraves da aeronautica.\nEspecialista em " +
+                "analise" +
+                " de dados e decifragem de padroes extraterrestres";
         int estamina = 10;
         int inteligencia = 10;
         int habilidades = 7;
         int forca = 6;
 
-        System.out.println("Você escolheu John Reeves\n");
+        System.out.println("Voce escolheu John Reeves\n");
         pausa(1000);
         printComDelay("Iniciando com John Reeves", false, 30);
         printComDelay(".....\n", true, 500);
@@ -670,25 +675,74 @@ public class Utils {
 
     public void historiaJohnReeves() {
         // TODO: Implementar
-        if (!listaPerguntas().isEmpty()) {
-            for (int i = 1; i <= 5; i++) {
-                fazPergunta();
-            }
-        } else {
-            printComDelay("PROBLEMAS SOLUCIONADOS!", true, 30);
-        }
+
+        printComDelay("#### Recuperando os Sistemas Internos####", true, 30);
+        pausa(2000);
+
+        printComDelay(" Analise do Banco de Dados e Ligacao entre Sistemas", true, 30);
+        pausa(2000);
+
+        printComDelay("Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de " +
+                "navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa." +
+                "\"AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, 30);
+        pausa(2000);
+
+        fazPergunta();
+
+        printComDelay("John responde corretamente, e AURA orienta restaura a ligacao dos dados de navegação. Ele" +
+                " segue as instrucoes para reparar o sistema e continua com os ajustes internos.", true, 30);
+        pausa(2000);
+
+        printComDelay("####**Verificação das Conexoes de Energia**####", true, 30);
+        pausa(2000);
+
+        printComDelay("Com o banco de dados de navegacao parcialmente restaurado, John agora precisa verificar o" +
+                " sistema de suporte de vida." +
+                "\" O painel de controle exibe novas pergunta sobre chaves e relacionamentos, que ele deve responder " +
+                "corretamente para prosseguir com o reparo:", true, 30);
+        pausa(2000);
+
+        fazPergunta();
+        fazPergunta();
+        fazPergunta();
+
+        printComDelay("**Encontro e Jornada Final: Missao em Nahum**",true, 30);
+        pausa(2000);
+
+        printComDelay("Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo, " +
+                "uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados" +
+                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true,30);
+        pausa(2000);
+
+        printComDelay("**AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se " +
+                "realizar uma altima normalizacao nos dados.*", true, 30);
+        pausa(2000);
+
+        printComDelay("John consulta o painel e é apresentado a uma última pergunta: *", true, 30);
+        pausa(2000);
+
+        fazPergunta();
+
+        printComDelay("**Objetivo Alcançado**", true, 30);
+        pausa(2000);
+
+        printComDelay("Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria." +
+                " Ao avançarem pela superficie do planeta, percebem que seus esforços e reparos na AETHER foram " +
+                "essenciais para o sucesso da missao," +
+                " prontos para enfrentar o próximo desafio juntos.", true, 30);
+        pausa(2000);
     }
 
     public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
-        System.out.println("Função: " + funcao);
+        System.out.println("Funcao: " + funcao);
         pausa(500);
-        System.out.println("Nível de estamina: " + estamina);
+        System.out.println("Nivel de estamina: " + estamina);
         pausa(500);
-        System.out.println("Nível de inteligência: " + inteligencia);
+        System.out.println("Nivel de inteligencia: " + inteligencia);
         pausa(500);
-        System.out.println("Nível de habilidades: " + habilidades);
+        System.out.println("Nivel de habilidades: " + habilidades);
         pausa(500);
-        System.out.println("Nível de força: " + forca);
+        System.out.println("Nivel de forca: " + forca);
         pausa(500);
     }
 }
