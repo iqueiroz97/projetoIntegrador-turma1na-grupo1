@@ -206,66 +206,8 @@ public class Utils {
     }
 
     public void jogar() {
-        printComDelay("#### CAPITULO I ####\n", true, 30);
-
-        pausa(1000);
-
-        printComDelay("EMERGENCIA NA NAVE AETHER", false, 30);
-        printComDelay(".....", true, 500);
-
-        printComDelay("""
-                
-                ======= O ano e 3129.
-                Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
-                uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
-                desencadeando uma serie de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
-                """, true, 30);
-
-        pausa(500);
-
+        historiaParte1();
         interacao("prosseguir");
-
-        printComDelay("""
-                -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
-                Por favor, consultem o painel de controle para mais detalhes.
-                """, true, 30);
-
-        pausa(500);
-
-        interacao("prosseguir");
-
-        printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30);
-
-        pausa(500);
-
-        printComDelay("""
-                
-                -Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
-                ****Disse Arkana.
-                """, true, 30);
-
-        pausa(500);
-
-        printComDelay("""
-                -Pode deixar, eu dou conta!
-                *****Disse John""", true, 30);
-
-        pausa(500);
-
-        printComDelay("""
-                
-                Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
-                enquanto John trabalha nos sistemas internos.
-                Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""", true, 30);
-
-        pausa(500);
-
-        switch (mostrarOpcoesPersonagens()) {
-            case 1 -> iniciarArkanaMoovit();
-            case 2 -> iniciarJohnReeves();
-            case 3 -> interacao("retornar");
-            default -> interacao("invalido");
-        }
     }
 
     // TODO: Pensar melhor nos crEditos
@@ -706,12 +648,12 @@ public class Utils {
         fazPergunta();
         fazPergunta();
 
-        printComDelay("**Encontro e Jornada Final: Missao em Nahum**",true, 30);
+        printComDelay("**Encontro e Jornada Final: Missao em Nahum**", true, 30);
         pausa(2000);
 
         printComDelay("Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo, " +
                 "uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados" +
-                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true,30);
+                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true, 30);
         pausa(2000);
 
         printComDelay("**AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se " +
@@ -731,6 +673,69 @@ public class Utils {
                 "essenciais para o sucesso da missao," +
                 " prontos para enfrentar o próximo desafio juntos.", true, 30);
         pausa(2000);
+    }
+
+    public void historiaParte1() {
+        printComDelay("#### CAPITULO I ####\n", true, 30);
+
+        pausa(1000);
+
+        printComDelay("EMERGENCIA NA NAVE AETHER", false, 30);
+        printComDelay(".....", true, 500);
+
+        printComDelay("""
+                
+                ======= O ano e 3129.
+                Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
+                uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
+                desencadeando uma serie de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
+                """, true, 30);
+
+        pausa(500);
+
+        interacao("prosseguir");
+
+        printComDelay("""
+                -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
+                Por favor, consultem o painel de controle para mais detalhes.
+                """, true, 30);
+
+        pausa(500);
+
+        interacao("prosseguir");
+
+        printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                
+                -Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
+                ****Disse Arkana.
+                """, true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                -Pode deixar, eu dou conta!
+                *****Disse John""", true, 30);
+
+        pausa(500);
+
+        printComDelay("""
+                
+                Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
+                enquanto John trabalha nos sistemas internos.
+                Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""", true, 30);
+
+        pausa(500);
+
+        switch (mostrarOpcoesPersonagens()) {
+            case 1 -> iniciarArkanaMoovit();
+            case 2 -> iniciarJohnReeves();
+            case 3 -> interacao("retornar");
+            default -> interacao("invalido");
+        }
     }
 
     public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
