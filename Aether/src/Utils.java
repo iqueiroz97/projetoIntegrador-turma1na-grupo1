@@ -25,11 +25,16 @@ public class Utils {
     private boolean encerraGame;
 
     // SOM
-    Clip clip;
-    AudioInputStream audioStream;
+    AudioInputStream audioStreamIntro;
+    Clip clipIntro;
+
+    AudioInputStream audioStreamOutros;
+    Clip clipOutros;
 
     // nostro5.wav by levelclearer -- https://freesound.org/s/259324/ -- License: Creative Commons 0
     String intro = "../resources/sounds/nostro5.wav";
+    // Enter Key Press Mechanical Keyboard by alpinemesh -- https://freesound.org/s/627647/ -- License: Creative Commons 0
+    String tecla = "../resources/sounds/enter-key-press.wav";
 
     // Testes
     String caractere = "/Users/iqueiroz/Downloads/aether_sons/texto.wav";
@@ -68,7 +73,7 @@ public class Utils {
                                   PRESSIONE <ENTER> PARA INICIAR""", true, 2);
 
         entrada.nextLine();
-        pararSom();
+        pressionaTecla();
     }
 
     // UTILITÁRIOS
@@ -89,16 +94,18 @@ public class Utils {
     public void tocarSom(String som) {
         try {
             File arquivoSom = new File(som);
-            audioStream = AudioSystem.getAudioInputStream(arquivoSom);
-            clip = AudioSystem.getClip();
 
             if (som.equals(intro)) {
-                clip.open(audioStream);
-                clip.start();
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                audioStreamIntro = AudioSystem.getAudioInputStream(arquivoSom);
+                clipIntro = AudioSystem.getClip();
+                clipIntro.open(audioStreamIntro);
+                clipIntro.start();
+                clipIntro.loop(Clip.LOOP_CONTINUOUSLY);
             } else {
-                clip.open(audioStream);
-                clip.start();
+                audioStreamOutros = AudioSystem.getAudioInputStream(arquivoSom);
+                clipOutros = AudioSystem.getClip();
+                clipOutros.open(audioStreamOutros);
+                clipOutros.start();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -107,9 +114,15 @@ public class Utils {
 
     public void pararSom() {
         try {
-            clip.flush();
-            clip.stop();
-            audioStream.close();
+            if (clipIntro.isRunning()) {
+                clipIntro.flush();
+                clipIntro.stop();
+                audioStreamIntro.close();
+            } else {
+                clipOutros.flush();
+                clipOutros.stop();
+                audioStreamOutros.close();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -153,12 +166,17 @@ public class Utils {
     }
 
     // INTERAÇÕES
+    public void pressionaTecla() {
+        tocarSom(tecla);
+    }
+
     public String selecionaOpcao() {
         String opcaoSelecionada;
 
         do {
             System.out.print("\nSELECIONE UMA OPCAO: ");
             opcaoSelecionada = entrada.nextLine().toLowerCase();
+            pressionaTecla();
         } while (opcaoSelecionada.isEmpty());
 
         limparTela();
@@ -176,6 +194,8 @@ public class Utils {
         }
 
         entrada.nextLine();
+        pressionaTecla();
+
         limparTela();
     }
 
@@ -251,6 +271,7 @@ public class Utils {
     }
 
     public void jogar() {
+        pararSom();
         historiaParte1();
         interacao("prosseguir");
     }
