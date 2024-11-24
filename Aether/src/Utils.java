@@ -1,4 +1,6 @@
 import java.util.*;
+import javax.sound.sampled.*;
+import java.io.File;
 
 public class Utils {
     // VARIÁVEIS E OBJETOS
@@ -22,6 +24,18 @@ public class Utils {
     private boolean primeiraExecucaoPartida = true;
     private boolean encerraGame;
 
+    // SOM
+    Clip clip;
+    AudioInputStream audioStream;
+
+    // nostro5.wav by levelclearer -- https://freesound.org/s/259324/ -- License: Creative Commons 0
+    String intro = "../resources/sounds/nostro5.wav";
+
+    // Testes
+    String caractere = "/Users/iqueiroz/Downloads/aether_sons/texto.wav";
+    String criatura = "/Users/iqueiroz/Downloads/aether_sons/criatura.wav";
+    String contato = "/Users/iqueiroz/Downloads/aether_sons/contato.wav";
+
     // GETTERS
     public boolean getEncerraGame() {
         return encerraGame;
@@ -34,10 +48,11 @@ public class Utils {
      * Alligator by Simon Bradley <syb3@aber.ac.uk>
      * 17th June, 1994
      */
-    // O código morse abaixo do banner diz "Terror no EspaCo"
+    // O código morse abaixo do banner diz "Terror no Espaço"
     public void banner() {
         limparTela();
 
+        tocarSom(intro);
         printComDelay("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
@@ -53,6 +68,7 @@ public class Utils {
                                   PRESSIONE <ENTER> PARA INICIAR""", true, 2);
 
         entrada.nextLine();
+        pararSom();
     }
 
     // UTILITÁRIOS
@@ -67,6 +83,35 @@ public class Utils {
                 System.out.flush();
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    public void tocarSom(String som) {
+        try {
+            File arquivoSom = new File(som);
+            audioStream = AudioSystem.getAudioInputStream(arquivoSom);
+            clip = AudioSystem.getClip();
+
+            if (som.equals(intro)) {
+                clip.open(audioStream);
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } else {
+                clip.open(audioStream);
+                clip.start();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void pararSom() {
+        try {
+            clip.flush();
+            clip.stop();
+            audioStream.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -107,7 +152,7 @@ public class Utils {
         mostraMenu();
     }
 
-    // INTERACoES
+    // INTERAÇÕES
     public String selecionaOpcao() {
         String opcaoSelecionada;
 
