@@ -24,22 +24,24 @@ public class Utils {
     private boolean primeiraExecucaoPartida = true;
     private boolean encerraGame;
 
-    // SOM
-    AudioInputStream audioStreamIntro;
-    Clip clipIntro;
-
-    AudioInputStream audioStreamOutros;
-    Clip clipOutros;
+    // RELACIONADOS AO SOM
+    AudioInputStream audioIntro;
+    Clip intro;
+    AudioInputStream audioOutros;
+    Clip outros;
+    AudioInputStream audioTextoHistoria;
+    Clip textoHistoria;
+    AudioInputStream audioRelogio;
+    Clip relogio;
 
     // nostro5.wav by levelclearer -- https://freesound.org/s/259324/ -- License: Creative Commons 0
-    String intro = "../resources/sounds/nostro5.wav";
+    String somIntro = "../resources/sounds/nostro5.wav";
     // Enter Key Press Mechanical Keyboard by alpinemesh -- https://freesound.org/s/627647/ -- License: Creative Commons 0
-    String tecla = "../resources/sounds/enter-key-press.wav";
-
-    // Testes
-    String caractere = "/Users/iqueiroz/Downloads/aether_sons/texto.wav";
-    String criatura = "/Users/iqueiroz/Downloads/aether_sons/criatura.wav";
-    String contato = "/Users/iqueiroz/Downloads/aether_sons/contato.wav";
+    String somTecla = "../resources/sounds/enter-key-press.wav";
+    // Bllrr-text-loop by lulyc -- https://freesound.org/s/346118/ -- License: Creative Commons 0
+    String somTexto = "../resources/sounds/text-loop.wav";
+    // Tabletop clock ticking, original speed by ycbcr -- https://freesound.org/s/388903/ -- License: Attribution 4.0
+    String somRelogio = "../resources/sounds/clock-ticking.wav";
 
     // GETTERS
     public boolean getEncerraGame() {
@@ -47,17 +49,17 @@ public class Utils {
     }
 
     // BANNER
-    // https://manytools.org/hacker-tools/ascii-banner/
-    // Fonte: Alligator
+    // O código morse abaixo do banner diz "Terror no Espaço"
     /*
+     * https://manytools.org/hacker-tools/ascii-banner/
+     * Fonte: Alligator
      * Alligator by Simon Bradley <syb3@aber.ac.uk>
      * 17th June, 1994
      */
-    // O código morse abaixo do banner diz "Terror no Espaço"
     public void banner() {
         limparTela();
 
-        tocarSom(intro);
+        tocarSom(somIntro);
         printComDelay("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
@@ -70,7 +72,7 @@ public class Utils {
                                                                                         \s
                         - . .-. .-. --- .-.    -. ---    . ... .--. .- -.-. ---         \s
                                                                                         \s
-                                  PRESSIONE <ENTER> PARA INICIAR""", true, 2);
+                                  PRESSIONE <ENTER> PARA INICIAR""", true, 2, true);
 
         entrada.nextLine();
         pressionaTecla();
@@ -91,47 +93,76 @@ public class Utils {
         }
     }
 
-    public void tocarSom(String som) {
+    public void tocarSom(String caminhoSom) {
         try {
-            File arquivoSom = new File(som);
+            File arquivoSom = new File(caminhoSom);
 
-            if (som.equals(intro)) {
-                audioStreamIntro = AudioSystem.getAudioInputStream(arquivoSom);
-                clipIntro = AudioSystem.getClip();
-                clipIntro.open(audioStreamIntro);
-                clipIntro.start();
-                clipIntro.loop(Clip.LOOP_CONTINUOUSLY);
+            if (caminhoSom.equals(somIntro)) {
+                audioIntro = AudioSystem.getAudioInputStream(arquivoSom);
+                intro = AudioSystem.getClip();
+                intro.open(audioIntro);
+                intro.start();
+                intro.loop(Clip.LOOP_CONTINUOUSLY);
+            } else if (caminhoSom.equals(somTexto)) {
+                audioTextoHistoria = AudioSystem.getAudioInputStream(arquivoSom);
+                textoHistoria = AudioSystem.getClip();
+                textoHistoria.open(audioTextoHistoria);
+                textoHistoria.start();
+            } else if (caminhoSom.equals(somRelogio)) {
+                audioRelogio = AudioSystem.getAudioInputStream(arquivoSom);
+                relogio = AudioSystem.getClip();
+                relogio.open(audioRelogio);
+                relogio.start();
+                relogio.loop(Clip.LOOP_CONTINUOUSLY);
             } else {
-                audioStreamOutros = AudioSystem.getAudioInputStream(arquivoSom);
-                clipOutros = AudioSystem.getClip();
-                clipOutros.open(audioStreamOutros);
-                clipOutros.start();
+                audioOutros = AudioSystem.getAudioInputStream(arquivoSom);
+                outros = AudioSystem.getClip();
+                outros.open(audioOutros);
+                outros.start();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void pararSom() {
+    public void pararSom(String caminhoSom) {
         try {
-            if (clipIntro.isRunning()) {
-                clipIntro.flush();
-                clipIntro.stop();
-                audioStreamIntro.close();
+            if (caminhoSom.equals(somIntro)) {
+                intro.stop();
+                intro.close();
+                intro.flush();
+                audioIntro.close();
+            } else if (caminhoSom.equals(somTexto)) {
+                textoHistoria.stop();
+                textoHistoria.close();
+                textoHistoria.flush();
+                audioTextoHistoria.close();
+            } else if (caminhoSom.equals(somRelogio)) {
+                relogio.stop();
+                relogio.close();
+                relogio.flush();
+                audioRelogio.close();
             } else {
-                clipOutros.flush();
-                clipOutros.stop();
-                audioStreamOutros.close();
+                outros.stop();
+                outros.close();
+                outros.flush();
+                audioOutros.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void printComDelay(String texto, boolean pulaLinha, int tempo) {
+    public void printComDelay(String texto, boolean pulaLinha, int tempo, boolean menu) {
         // Ajustar o tempo para imprimir mais rápido ou mais devagar
         for (int i = 0; i < texto.length(); i++) {
-            System.out.print(texto.charAt(i));
+            if (menu) {
+                System.out.print(texto.charAt(i));
+            } else {
+                tocarSom(somTexto);
+                System.out.print(texto.charAt(i));
+//                pararSom(somTexto);
+            }
             pausa(tempo);
         }
 
@@ -167,7 +198,7 @@ public class Utils {
 
     // INTERAÇÕES
     public void pressionaTecla() {
-        tocarSom(tecla);
+        tocarSom(somTecla);
     }
 
     public String selecionaOpcao() {
@@ -226,7 +257,7 @@ public class Utils {
                 +#+       +#+ +#+        +#+  +#+#+# +#+    +#+\s
                 #+#       #+# #+#        #+#   #+#+# #+#    #+#\s
                 ###       ### ########## ###    ####  ######## \s
-                """, true, 1);
+                """, true, 1, true);
 
         System.out.println("""
                 1 - INSTRUCOES\r
@@ -255,7 +286,7 @@ public class Utils {
                     +#+     +#+  +#+#+#        +#+    +#+     +#+    +#+ +#+    +#+ +#+        +#+    +#+ +#+              +#+\s
                     #+#     #+#   #+#+# #+#    #+#    #+#     #+#    #+# #+#    #+# #+#    #+# #+#    #+# #+#       #+#    #+#\s
                 ########### ###    ####  ########     ###     ###    ###  ########   ########   ########  ########## ######## \s
-                """, true, 1);
+                """, true, 1, true);
 
         System.out.println("""
                 
@@ -271,7 +302,7 @@ public class Utils {
     }
 
     public void jogar() {
-        pararSom();
+        pararSom(somIntro);
         historiaParte1();
         interacao("prosseguir");
     }
@@ -287,7 +318,7 @@ public class Utils {
                 +#+        +#+    +#+ +#+        +#+    +#+    +#+         +#+    +#+    +#+        +#+\s
                 #+#    #+# #+#    #+# #+#        #+#    #+#    #+#         #+#    #+#    #+# #+#    #+#\s
                  ########  ###    ### ########## ######### ###########     ###     ########   ######## \s
-                """, true, 1);
+                """, true, 1, true);
 
         System.out.println("""
                 
@@ -309,7 +340,7 @@ public class Utils {
                        +#+    +#+ +#+     +#+ +#+     +#+    +#+        +#+\s
                 #+#    #+#    #+# #+#     #+# #+#     #+#    #+# #+#    #+#\s
                  ########     ### ###     ### ###      ########   ######## \s
-                """, true, 1);
+                """, true, 1, true);
 
         System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
         System.out.println("RESPOSTAS INCORRETAS: " + contadorRespostaIncorreta);
@@ -327,7 +358,7 @@ public class Utils {
                        +#+ +#+     +#+     +#+     +#+    +#+\s
                 #+#    #+# #+#     #+#     #+#     #+#    #+#\s
                  ########  ###     ### ########### ###    ###\s
-                """, true, 1);
+                """, true, 1, true);
 
         int confirmaEncerramento;
 
@@ -372,17 +403,17 @@ public class Utils {
         };
 
         // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
-        // Compara a posiCão da alternativa correta com a posiCão da resposta do jogador
+        // Compara a posição da alternativa correta com a posição da resposta do jogador
         if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
             contadorRespostaCorreta += 1;
-            printComDelay("\nRESPOSTA CORRETA!", true, 30);
+            printComDelay("\nRESPOSTA CORRETA!", true, 30, false);
             return true;
         } else if (posicaoRespostaJogador == -1) {
-            printComDelay("\nRESPOSTA INVALIDA!", true, 30);
+            printComDelay("\nRESPOSTA INVALIDA!", true, 30, false);
             return false;
         } else {
             contadorRespostaIncorreta += 1;
-            printComDelay("\nRESPOSTA INCORRETA!", true, 30);
+            printComDelay("\nRESPOSTA INCORRETA!", true, 30, false);
             return false;
         }
     }
@@ -397,12 +428,14 @@ public class Utils {
             System.out.println("\nBANCO DE DADOS INSTAVEL!\n");
             pausa(500);
             printComDelay("VOCE POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
-                    "RESPONDER A QUESTAO.\nCASO CONTRARIO, UMA PARTICAO DO BANCO DE DADOS IRA CORROMPER", false, 30);
-            printComDelay("...", true, 500);
+                            "RESPONDER A QUESTAO.\nCASO CONTRARIO, UMA PARTICAO DO BANCO DE DADOS IRA CORROMPER", false, 30,
+                    false);
+            printComDelay("...", true, 500, false);
 
             // Inicia o cronômetro
+            tocarSom(somRelogio);
             long tempoRestante = tempoLimiteQuestao;
-            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de inIcio da questão
+            long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
 
             while ((tempoRestante > 0 && tentativas > 0) && !encerraQuestao) {
                 tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
@@ -417,16 +450,18 @@ public class Utils {
                 mostraPergunta(perguntaAtual);
 
                 if (tempoRestante < 1) {
+                    pararSom(somRelogio);
                     limparTela();
-                    printComDelay("\nTEMPO ESGOTADO!", true, 30);
+                    printComDelay("\nTEMPO ESGOTADO!", true, 30, false);
                 } else {
                     respostaJogador = selecionaOpcao();
                     respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
 
                     if (respostaCorreta || tentativas == 1) {
                         if (respostaCorreta) {
-                            printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30);
-                            printComDelay("...", true, 500);
+                            pararSom(somRelogio);
+                            printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30, false);
+                            printComDelay("...", true, 500, false);
                         }
 
                         listaPerguntas().remove(0); // Remove a pergunta atual da lista de perguntas
@@ -436,7 +471,7 @@ public class Utils {
                 tentativas--;
             }
         } else {
-            printComDelay("\nBANCO DE DADOS ESTAVEL", false, 30);
+            printComDelay("\nBANCO DE DADOS ESTAVEL", false, 30, false);
         }
         interacao("prosseguir");
     }
@@ -449,11 +484,12 @@ public class Utils {
             perguntaAtual.remove(0);
         }
 
-        printComDelay("AURA: " + enunciado, true, 20);
+//        printComDelay("AURA: " + enunciado, true, 20, false);
+        System.out.println("AURA: " + enunciado);
 
         embaralha(perguntaAtual);
 
-        // Mostra a lista de alternativas, onde as opCoes de "a" atE "e" ficam fixas
+        // Mostra a lista de alternativas, onde as opCoes de "a" até "e" ficam fixas
         for (int i = 0; i < perguntaAtual.size(); i++) {
             System.out.println(opcoes[i] + perguntaAtual.get(i));
             pausa(500);
@@ -646,8 +682,8 @@ public class Utils {
 
         System.out.println("Voce escolheu Arkana Moovit\n");
         pausa(1000);
-        printComDelay("Iniciando com Arkana Moovit", false, 30);
-        printComDelay(".....\n", true, 500);
+        printComDelay("Iniciando com Arkana Moovit", false, 30, false);
+        printComDelay(".....\n", true, 500, false);
 
         mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
 
@@ -671,8 +707,8 @@ public class Utils {
 
         System.out.println("Voce escolheu John Reeves\n");
         pausa(1000);
-        printComDelay("Iniciando com John Reeves", false, 30);
-        printComDelay(".....\n", true, 500);
+        printComDelay("Iniciando com John Reeves", false, 30, false);
+        printComDelay(".....\n", true, 500, false);
 
         mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
 
@@ -684,70 +720,70 @@ public class Utils {
     public void historiaJohnReeves() {
         // TODO: Implementar
 
-        printComDelay("#### Recuperando os Sistemas Internos####", true, 30);
+        printComDelay("#### Recuperando os Sistemas Internos####", true, 30, false);
         pausa(2000);
 
-        printComDelay(" Analise do Banco de Dados e Ligacao entre Sistemas", true, 30);
+        printComDelay(" Analise do Banco de Dados e Ligacao entre Sistemas", true, 30, false);
         pausa(2000);
 
         printComDelay("Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de " +
                 "navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa." +
-                "\"AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, 30);
+                "\"AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, 30, false);
         pausa(2000);
 
         fazPergunta();
 
         printComDelay("John responde corretamente, e AURA orienta restaura a ligacao dos dados de navegação. Ele" +
-                " segue as instrucoes para reparar o sistema e continua com os ajustes internos.", true, 30);
+                " segue as instrucoes para reparar o sistema e continua com os ajustes internos.", true, 30, false);
         pausa(2000);
 
-        printComDelay("####**Verificação das Conexoes de Energia**####", true, 30);
+        printComDelay("####**Verificação das Conexoes de Energia**####", true, 30, false);
         pausa(2000);
 
         printComDelay("Com o banco de dados de navegacao parcialmente restaurado, John agora precisa verificar o" +
                 " sistema de suporte de vida." +
                 "\" O painel de controle exibe novas pergunta sobre chaves e relacionamentos, que ele deve responder " +
-                "corretamente para prosseguir com o reparo:", true, 30);
+                "corretamente para prosseguir com o reparo:", true, 30, false);
         pausa(2000);
 
         fazPergunta();
         fazPergunta();
         fazPergunta();
 
-        printComDelay("**Encontro e Jornada Final: Missao em Nahum**", true, 30);
+        printComDelay("**Encontro e Jornada Final: Missao em Nahum**", true, 30, false);
         pausa(2000);
 
         printComDelay("Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo, " +
                 "uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados" +
-                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true, 30);
+                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true, 30, false);
         pausa(2000);
 
         printComDelay("**AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se " +
-                "realizar uma altima normalizacao nos dados.*", true, 30);
+                "realizar uma altima normalizacao nos dados.*", true, 30, false);
         pausa(2000);
 
-        printComDelay("John consulta o painel e é apresentado a uma última pergunta: *", true, 30);
+        printComDelay("John consulta o painel e é apresentado a uma última pergunta: *", true, 30, false);
         pausa(2000);
 
         fazPergunta();
 
-        printComDelay("**Objetivo Alcançado**", true, 30);
+        printComDelay("**Objetivo Alcançado**", true, 30, false);
         pausa(2000);
 
         printComDelay("Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria." +
                 " Ao avançarem pela superficie do planeta, percebem que seus esforços e reparos na AETHER foram " +
                 "essenciais para o sucesso da missao," +
-                " prontos para enfrentar o próximo desafio juntos.", true, 30);
+                " prontos para enfrentar o próximo desafio juntos.", true, 30, false);
         pausa(2000);
     }
 
     public void historiaParte1() {
-        printComDelay("#### CAPITULO I ####\n", true, 30);
+        printComDelay("#### CAPITULO I ####\n", true, 30, false);
 
         pausa(1000);
 
-        printComDelay("EMERGENCIA NA NAVE AETHER", false, 30);
-        printComDelay(".....", true, 500);
+        printComDelay("EMERGENCIA NA NAVE AETHER", false, 30, false);
+        printComDelay(".....", true, 500, false);
 
         printComDelay("""
                 
@@ -755,7 +791,7 @@ public class Utils {
                 Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
                 uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
                 desencadeando uma serie de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
-                """, true, 30);
+                """, true, 30, false);
 
         pausa(500);
 
@@ -764,13 +800,13 @@ public class Utils {
         printComDelay("""
                 -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
                 Por favor, consultem o painel de controle para mais detalhes.
-                """, true, 30);
+                """, true, 30, false);
 
         pausa(500);
 
         interacao("prosseguir");
 
-        printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30);
+        printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30, false);
 
         pausa(500);
 
@@ -778,21 +814,22 @@ public class Utils {
                 
                 -Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
                 ****Disse Arkana.
-                """, true, 30);
+                """, true, 30, false);
 
         pausa(500);
 
         printComDelay("""
                 -Pode deixar, eu dou conta!
-                *****Disse John""", true, 30);
+                *****Disse John""", true, 30, false);
 
         pausa(500);
 
         printComDelay("""
-                
-                Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
-                enquanto John trabalha nos sistemas internos.
-                Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""", true, 30);
+                        
+                        Assim, com cada um assumindo a responsabilidade por uma parte da nave, Arkana lida com o exterior,
+                        enquanto John trabalha nos sistemas internos.
+                        Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""", true, 30,
+                false);
 
         pausa(500);
 
