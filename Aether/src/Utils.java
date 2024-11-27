@@ -1,6 +1,7 @@
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.*;
 import javax.sound.sampled.*;
-import java.io.File;
 
 public class Utils {
     // VARIÁVEIS E OBJETOS
@@ -15,7 +16,7 @@ public class Utils {
             alternativaCorretaPergunta4, alternativaCorretaPergunta5;
     private int posicaoAlternativaCorreta;
 
-    // RELACIONADOS A ESTATISTICAS
+    // RELACIONADOS A ESTATÍSTICAS
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
 
@@ -25,23 +26,26 @@ public class Utils {
     private boolean encerraGame;
 
     // RELACIONADOS AO SOM
-    AudioInputStream audioIntro;
-    Clip intro;
-    AudioInputStream audioOutros;
-    Clip outros;
-    AudioInputStream audioTextoHistoria;
-    Clip textoHistoria;
-    AudioInputStream audioRelogio;
-    Clip relogio;
-
     // nostro5.wav by levelclearer -- https://freesound.org/s/259324/ -- License: Creative Commons 0
-    String somIntro = "../resources/sounds/nostro5.wav";
+    InputStream somIntro = getClass().getResourceAsStream("/main/resources/sounds/intro.wav");
     // Enter Key Press Mechanical Keyboard by alpinemesh -- https://freesound.org/s/627647/ -- License: Creative Commons 0
-    String somTecla = "../resources/sounds/enter-key-press.wav";
+    InputStream somTecla = getClass().getResourceAsStream("/main/resources/sounds/enter-key-press.wav");
     // Bllrr-text-loop by lulyc -- https://freesound.org/s/346118/ -- License: Creative Commons 0
-    String somTexto = "../resources/sounds/text-loop.wav";
+    InputStream somTexto = getClass().getResourceAsStream("/main/resources/sounds/text-loop.wav");
     // Tabletop clock ticking, original speed by ycbcr -- https://freesound.org/s/388903/ -- License: Attribution 4.0
-    String somRelogio = "../resources/sounds/clock-ticking.wav";
+    InputStream somRelogio = getClass().getResourceAsStream("/main/resources/sounds/clock-ticking.wav");
+    // Correct and Incorrect Chime by LaurenPonder -- https://freesound.org/s/639432/ -- License: Creative Commons 0
+    InputStream somRespostaCorreta = getClass().getResourceAsStream("/main/resources/sounds/correct-chime.wav");
+    InputStream somRespostaIncorreta = getClass().getResourceAsStream("/main/resources/sounds/incorrect-chime.wav");
+
+    BufferedInputStream bufferSom;
+    AudioInputStream audio;
+    Clip intro;
+    Clip tecla;
+    Clip textoHistoria;
+    Clip relogio;
+    Clip respostaCorreta;
+    Clip respostaIncorreta;
 
     // GETTERS
     public boolean getEncerraGame() {
@@ -57,9 +61,9 @@ public class Utils {
      * 17th June, 1994
      */
     public void banner() {
-        limparTela();
+        limpaTerminal();
 
-        tocarSom(somIntro);
+        tocarSom(somIntro, TipoSom.INTRO, true);
         printComDelay("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
@@ -79,9 +83,13 @@ public class Utils {
     }
 
     // UTILITÁRIOS
-    public void limparTela() {
+    public boolean identificaWindows() {
+        return System.getProperty("os.name").contains("Windows");
+    }
+
+    public void limpaTerminal() {
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
+            if (identificaWindows()) {
                 // Comando para Windows
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             } else {
@@ -93,61 +101,102 @@ public class Utils {
         }
     }
 
-    public void tocarSom(String caminhoSom) {
-        try {
-            File arquivoSom = new File(caminhoSom);
+    // Enum para os tipos de som
+    public enum TipoSom {
+        INTRO, TECLA, TEXTO, RELOGIO, RESPOSTA_CORRETA, RESPOSTA_INCORRETA
+    }
 
-            if (caminhoSom.equals(somIntro)) {
-                audioIntro = AudioSystem.getAudioInputStream(arquivoSom);
-                intro = AudioSystem.getClip();
-                intro.open(audioIntro);
-                intro.start();
-                intro.loop(Clip.LOOP_CONTINUOUSLY);
-            } else if (caminhoSom.equals(somTexto)) {
-                audioTextoHistoria = AudioSystem.getAudioInputStream(arquivoSom);
-                textoHistoria = AudioSystem.getClip();
-                textoHistoria.open(audioTextoHistoria);
-                textoHistoria.start();
-            } else if (caminhoSom.equals(somRelogio)) {
-                audioRelogio = AudioSystem.getAudioInputStream(arquivoSom);
-                relogio = AudioSystem.getClip();
-                relogio.open(audioRelogio);
-                relogio.start();
-                relogio.loop(Clip.LOOP_CONTINUOUSLY);
-            } else {
-                audioOutros = AudioSystem.getAudioInputStream(arquivoSom);
-                outros = AudioSystem.getClip();
-                outros.open(audioOutros);
-                outros.start();
+    public void tocarSom(InputStream som, TipoSom tipo, boolean loop) {
+        try {
+            // Cria um BufferedInputStream para o caminho do som
+            bufferSom = new BufferedInputStream(som);
+            audio = AudioSystem.getAudioInputStream(bufferSom);
+
+            switch (tipo) {
+                case INTRO:
+                    intro = AudioSystem.getClip();
+                    intro.open(audio);
+                    intro.start();
+                    if (loop) intro.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
+                case TECLA:
+                    tecla = AudioSystem.getClip();
+                    tecla.open(audio);
+                    tecla.start();
+                    if (loop) tecla.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
+                case TEXTO:
+                    textoHistoria = AudioSystem.getClip();
+                    textoHistoria.open(audio);
+                    textoHistoria.start();
+                    if (loop) textoHistoria.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
+                case RELOGIO:
+                    relogio = AudioSystem.getClip();
+                    relogio.open(audio);
+                    relogio.start();
+                    if (loop) relogio.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
+                case RESPOSTA_CORRETA:
+                    respostaCorreta = AudioSystem.getClip();
+                    respostaCorreta.open(audio);
+                    respostaCorreta.start();
+                    if (loop) respostaCorreta.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
+                case RESPOSTA_INCORRETA:
+                    respostaIncorreta = AudioSystem.getClip();
+                    respostaIncorreta.open(audio);
+                    respostaIncorreta.start();
+                    if (loop) respostaIncorreta.loop(Clip.LOOP_CONTINUOUSLY);
+                    break;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void pararSom(String caminhoSom) {
+    public void pararSom(TipoSom tipo) {
         try {
-            if (caminhoSom.equals(somIntro)) {
-                intro.stop();
-                intro.close();
-                intro.flush();
-                audioIntro.close();
-            } else if (caminhoSom.equals(somTexto)) {
-                textoHistoria.stop();
-                textoHistoria.close();
-                textoHistoria.flush();
-                audioTextoHistoria.close();
-            } else if (caminhoSom.equals(somRelogio)) {
-                relogio.stop();
-                relogio.close();
-                relogio.flush();
-                audioRelogio.close();
-            } else {
-                outros.stop();
-                outros.close();
-                outros.flush();
-                audioOutros.close();
+            switch (tipo) {
+                case INTRO:
+                    intro.stop();
+                    intro.close();
+                    intro.flush();
+                    break;
+                case TECLA:
+                    tecla.stop();
+                    tecla.close();
+                    tecla.flush();
+                    break;
+                case TEXTO:
+                    textoHistoria.stop();
+                    textoHistoria.close();
+                    textoHistoria.flush();
+                    break;
+                case RELOGIO:
+                    relogio.stop();
+                    relogio.close();
+                    relogio.flush();
+                    break;
+                case RESPOSTA_CORRETA:
+                    respostaCorreta.stop();
+                    respostaCorreta.close();
+                    respostaCorreta.flush();
+                    break;
+                case RESPOSTA_INCORRETA:
+                    respostaIncorreta.stop();
+                    respostaIncorreta.close();
+                    respostaIncorreta.flush();
+                    break;
             }
+
+            if (audio != null) {
+                audio.close();
+            }
+            if (bufferSom != null) {
+                bufferSom.close();
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,9 +208,9 @@ public class Utils {
             if (menu) {
                 System.out.print(texto.charAt(i));
             } else {
-                tocarSom(somTexto);
+                tocarSom(somTexto, TipoSom.TEXTO, false);
                 System.out.print(texto.charAt(i));
-//                pararSom(somTexto);
+                pararSom(TipoSom.TEXTO);
             }
             pausa(tempo);
         }
@@ -198,7 +247,7 @@ public class Utils {
 
     // INTERAÇÕES
     public void pressionaTecla() {
-        tocarSom(somTecla);
+        tocarSom(somTecla, TipoSom.TECLA, false);
     }
 
     public String selecionaOpcao() {
@@ -210,7 +259,7 @@ public class Utils {
             pressionaTecla();
         } while (opcaoSelecionada.isEmpty());
 
-        limparTela();
+        limpaTerminal();
 
         return opcaoSelecionada;
     }
@@ -225,9 +274,8 @@ public class Utils {
         }
 
         entrada.nextLine();
-        pressionaTecla();
 
-        limparTela();
+        limpaTerminal();
     }
 
     public int confirmarAcao() {
@@ -246,7 +294,7 @@ public class Utils {
 
     // MENU
     public void mostraMenu() {
-        limparTela();
+        limpaTerminal();
 
         printComDelay("""
                 
@@ -302,12 +350,12 @@ public class Utils {
     }
 
     public void jogar() {
-        pararSom(somIntro);
+        pararSom(TipoSom.INTRO);
         historiaParte1();
         interacao("prosseguir");
     }
 
-    // TODO: Pensar melhor nos crEditos
+    // TODO: Pensar melhor nos créditos
     public void creditos() {
         printComDelay("""
                 
@@ -392,7 +440,7 @@ public class Utils {
             }
         }
 
-        // Checa a posiCão da resposta do jogador
+        // Checa a posição da resposta do jogador
         int posicaoRespostaJogador = switch (respostaJogador) {
             case "a" -> 0;
             case "b" -> 1;
@@ -405,6 +453,7 @@ public class Utils {
         // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
         // Compara a posição da alternativa correta com a posição da resposta do jogador
         if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
+            tocarSom(somRespostaCorreta, TipoSom.RESPOSTA_CORRETA, false);
             contadorRespostaCorreta += 1;
             printComDelay("\nRESPOSTA CORRETA!", true, 30, false);
             return true;
@@ -412,6 +461,7 @@ public class Utils {
             printComDelay("\nRESPOSTA INVALIDA!", true, 30, false);
             return false;
         } else {
+            tocarSom(somRespostaIncorreta, TipoSom.RESPOSTA_INCORRETA, false);
             contadorRespostaIncorreta += 1;
             printComDelay("\nRESPOSTA INCORRETA!", true, 30, false);
             return false;
@@ -433,7 +483,7 @@ public class Utils {
             printComDelay("...", true, 500, false);
 
             // Inicia o cronômetro
-            tocarSom(somRelogio);
+            tocarSom(somRelogio, TipoSom.RELOGIO, true);
             long tempoRestante = tempoLimiteQuestao;
             long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
 
@@ -450,8 +500,8 @@ public class Utils {
                 mostraPergunta(perguntaAtual);
 
                 if (tempoRestante < 1) {
-                    pararSom(somRelogio);
-                    limparTela();
+                    pararSom(TipoSom.RELOGIO);
+                    limpaTerminal();
                     printComDelay("\nTEMPO ESGOTADO!", true, 30, false);
                 } else {
                     respostaJogador = selecionaOpcao();
@@ -459,7 +509,7 @@ public class Utils {
 
                     if (respostaCorreta || tentativas == 1) {
                         if (respostaCorreta) {
-                            pararSom(somRelogio);
+                            pararSom(TipoSom.RELOGIO);
                             printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30, false);
                             printComDelay("...", true, 500, false);
                         }
@@ -718,8 +768,6 @@ public class Utils {
     }
 
     public void historiaJohnReeves() {
-        // TODO: Implementar
-
         printComDelay("#### Recuperando os Sistemas Internos####", true, 30, false);
         pausa(2000);
 
