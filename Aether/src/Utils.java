@@ -125,7 +125,7 @@ public class Utils {
         String audioDiretorioAjustado = ajustaDiretiorio(audio);
         System.out.println("Caminho do arquivo de áudio ajustado: " + audioDiretorioAjustado);
 
-        try (InputStream caminhoEntrada = getClass().getResourceAsStream(audioDiretorioAjustado)) {
+        try (InputStream caminhoEntrada = getClass().getClassLoader().getResourceAsStream(audioDiretorioAjustado)) {
             if (caminhoEntrada == null) {
                 throw new RuntimeException("Arquivo de áudio não encontrado: " + audioDiretorioAjustado);
             }
