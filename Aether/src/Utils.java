@@ -96,17 +96,10 @@ public class Utils {
     }
 
     public String ajustaDiretiorio(String audio) {
-        System.out.println(System.getProperty("os.path"));
-
-        String caminhoAjustado = audio;
-
         if (identificaWindows()) {
-            caminhoAjustado = audio.replace("/", "\\");
+            return audio.replace("/", "\\");
         }
-
-        System.out.println(caminhoAjustado);
-
-        return caminhoAjustado;
+        return audio;
     }
 
     public void limpaTerminal() {
@@ -129,9 +122,12 @@ public class Utils {
     }
 
     public void tocarSom(String audio, TipoAudio tipo) {
-        try (InputStream caminhoEntrada = getClass().getResourceAsStream(ajustaDiretiorio(audio))) {
+        String audioDiretorioAjustado = ajustaDiretiorio(audio);
+        System.out.println("Caminho do arquivo de áudio ajustado: " + audioDiretorioAjustado);
+
+        try (InputStream caminhoEntrada = getClass().getResourceAsStream(audioDiretorioAjustado)) {
             if (caminhoEntrada == null) {
-                throw new RuntimeException("Arquivo de audio nao encontrado: " + caminhoEntrada);
+                throw new RuntimeException("Arquivo de áudio não encontrado: " + audioDiretorioAjustado);
             }
 
             BufferedInputStream buffer = new BufferedInputStream(caminhoEntrada);
@@ -167,7 +163,7 @@ public class Utils {
                     break;
             }
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao reproduzir audio: ", e);
+            throw new RuntimeException("Erro ao reproduzir áudio: " + audioDiretorioAjustado, e);
         }
     }
 
