@@ -27,29 +27,37 @@ public class Utils {
 
     // RELACIONADOS AO SOM
     // nostro5.wav by levelclearer -- https://freesound.org/s/259324/ -- License: Creative Commons 0
-    InputStream somIntro = getClass().getResourceAsStream("/main/resources/sounds/intro.wav");
+    String audioIntro = "main/resources/sounds/intro.wav";
     // Enter Key Press Mechanical Keyboard by alpinemesh -- https://freesound.org/s/627647/ -- License: Creative Commons 0
-    InputStream somTecla = getClass().getResourceAsStream("/main/resources/sounds/enter-key-press.wav");
+    String audioTecla = "main/resources/sounds/enter-key-press.wav";
     // Bllrr-text-loop by lulyc -- https://freesound.org/s/346118/ -- License: Creative Commons 0
-    InputStream somTexto = getClass().getResourceAsStream("/main/resources/sounds/text-loop.wav");
+    String audioTexto = "main/resources/sounds/text-loop.wav";
     // Tabletop clock ticking, original speed by ycbcr -- https://freesound.org/s/388903/ -- License: Attribution 4.0
-    InputStream somRelogio = getClass().getResourceAsStream("/main/resources/sounds/clock-ticking.wav");
+    String audioRelogio = "main/resources/sounds/clock-ticking.wav";
     // Correct and Incorrect Chime by LaurenPonder -- https://freesound.org/s/639432/ -- License: Creative Commons 0
-    InputStream somRespostaCorreta = getClass().getResourceAsStream("/main/resources/sounds/correct-chime.wav");
-    InputStream somRespostaIncorreta = getClass().getResourceAsStream("/main/resources/sounds/incorrect-chime.wav");
+    String audioRespostaCorreta = "main/resources/sounds/correct-chime.wav";
+    String audioRespostaIncorreta = "main/resources/sounds/incorrect-chime.wav";
 
-    BufferedInputStream bufferSom;
-    AudioInputStream audio;
-    Clip intro;
-    Clip tecla;
-    Clip textoHistoria;
-    Clip relogio;
-    Clip respostaCorreta;
-    Clip respostaIncorreta;
+    private Clip clipIntro;
+    private Clip clipTecla;
+    private Clip clipTexto;
+    private Clip clipRelogio;
+    private Clip clipRespostaCorreta;
+    private Clip clipRespostaIncorreta;
 
     // GETTERS
     public boolean getEncerraGame() {
         return encerraGame;
+    }
+
+    // INICIALIZACÃO
+    public void iniciaJogo() {
+        if (primeiraExecucaoJogo) {
+            banner();
+            primeiraExecucaoJogo = false;
+        }
+
+        mostraMenu();
     }
 
     // BANNER
@@ -63,7 +71,7 @@ public class Utils {
     public void banner() {
         limpaTerminal();
 
-        tocarSom(somIntro, TipoSom.INTRO, true);
+        tocarSom(audioIntro, TipoAudio.INTRO);
         printComDelay("""
                 
                           :::     :::::::::: ::::::::::: :::    ::: :::::::::: :::::::::\s
@@ -87,6 +95,16 @@ public class Utils {
         return System.getProperty("os.name").contains("Windows");
     }
 
+    public String ajustaDiretiorio(String audio) {
+        String caminhoAjustado = audio;
+
+        if (identificaWindows()) {
+            caminhoAjustado = audio.replace("/", "\\");
+        }
+
+        return caminhoAjustado;
+    }
+
     public void limpaTerminal() {
         try {
             if (identificaWindows()) {
@@ -102,103 +120,95 @@ public class Utils {
     }
 
     // Enum para os tipos de som
-    public enum TipoSom {
+    public enum TipoAudio {
         INTRO, TECLA, TEXTO, RELOGIO, RESPOSTA_CORRETA, RESPOSTA_INCORRETA
     }
 
-    public void tocarSom(InputStream som, TipoSom tipo, boolean loop) {
-        try {
-            // Cria um BufferedInputStream para o caminho do som
-            bufferSom = new BufferedInputStream(som);
-            audio = AudioSystem.getAudioInputStream(bufferSom);
+    public void tocarSom(String audio, TipoAudio tipo) {
+        try (InputStream caminhoEntrada = getClass().getResourceAsStream(ajustaDiretiorio(audio))) {
+            if (caminhoEntrada == null) {
+                throw new RuntimeException("Arquivo de audio nao encontrado: " + caminhoEntrada);
+            }
+
+            BufferedInputStream buffer = new BufferedInputStream(caminhoEntrada);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(buffer);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
 
             switch (tipo) {
                 case INTRO:
-                    intro = AudioSystem.getClip();
-                    intro.open(audio);
-                    intro.start();
-                    if (loop) intro.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipIntro = clip;
+                    clip.loop(Clip.LOOP_CONTINUOUSLY);
                     break;
                 case TECLA:
-                    tecla = AudioSystem.getClip();
-                    tecla.open(audio);
-                    tecla.start();
-                    if (loop) tecla.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipTecla = clip;
+                    clip.start();
                     break;
                 case TEXTO:
-                    textoHistoria = AudioSystem.getClip();
-                    textoHistoria.open(audio);
-                    textoHistoria.start();
-                    if (loop) textoHistoria.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipTexto = clip;
+                    clip.start();
                     break;
                 case RELOGIO:
-                    relogio = AudioSystem.getClip();
-                    relogio.open(audio);
-                    relogio.start();
-                    if (loop) relogio.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipRelogio = clip;
+                    clip.loop(Clip.LOOP_CONTINUOUSLY);
                     break;
                 case RESPOSTA_CORRETA:
-                    respostaCorreta = AudioSystem.getClip();
-                    respostaCorreta.open(audio);
-                    respostaCorreta.start();
-                    if (loop) respostaCorreta.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipRespostaCorreta = clip;
+                    clip.start();
                     break;
                 case RESPOSTA_INCORRETA:
-                    respostaIncorreta = AudioSystem.getClip();
-                    respostaIncorreta.open(audio);
-                    respostaIncorreta.start();
-                    if (loop) respostaIncorreta.loop(Clip.LOOP_CONTINUOUSLY);
+                    clipRespostaIncorreta = clip;
+                    clip.start();
                     break;
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erro ao reproduzir audio: ", e);
         }
     }
 
-    public void pararSom(TipoSom tipo) {
+    public void pararSom(TipoAudio tipo) {
         try {
             switch (tipo) {
                 case INTRO:
-                    intro.stop();
-                    intro.close();
-                    intro.flush();
+                    if (clipIntro != null && clipIntro.isRunning()) {
+                        clipIntro.stop();
+                        clipIntro.close();
+                    }
                     break;
                 case TECLA:
-                    tecla.stop();
-                    tecla.close();
-                    tecla.flush();
+                    if (clipTecla != null && clipTecla.isRunning()) {
+                        clipTecla.stop();
+                        clipTecla.close();
+                    }
                     break;
                 case TEXTO:
-                    textoHistoria.stop();
-                    textoHistoria.close();
-                    textoHistoria.flush();
+                    if (clipTexto != null && clipTexto.isRunning()) {
+                        clipTexto.stop();
+                        clipTexto.close();
+                    }
                     break;
                 case RELOGIO:
-                    relogio.stop();
-                    relogio.close();
-                    relogio.flush();
+                    if (clipRelogio != null && clipRelogio.isRunning()) {
+                        clipRelogio.stop();
+                        clipRelogio.close();
+                    }
                     break;
                 case RESPOSTA_CORRETA:
-                    respostaCorreta.stop();
-                    respostaCorreta.close();
-                    respostaCorreta.flush();
+                    if (clipRespostaCorreta != null && clipRespostaCorreta.isRunning()) {
+                        clipRespostaCorreta.stop();
+                        clipRespostaCorreta.close();
+                    }
                     break;
                 case RESPOSTA_INCORRETA:
-                    respostaIncorreta.stop();
-                    respostaIncorreta.close();
-                    respostaIncorreta.flush();
+                    if (clipRespostaIncorreta != null && clipRespostaIncorreta.isRunning()) {
+                        clipRespostaIncorreta.stop();
+                        clipRespostaIncorreta.close();
+                    }
                     break;
             }
-
-            if (audio != null) {
-                audio.close();
-            }
-            if (bufferSom != null) {
-                bufferSom.close();
-            }
-
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erro ao parar o som: ", e);
         }
     }
 
@@ -208,9 +218,8 @@ public class Utils {
             if (menu) {
                 System.out.print(texto.charAt(i));
             } else {
-                tocarSom(somTexto, TipoSom.TEXTO, false);
+                tocarSom(audioTexto, TipoAudio.TEXTO);
                 System.out.print(texto.charAt(i));
-                pararSom(TipoSom.TEXTO);
             }
             pausa(tempo);
         }
@@ -235,19 +244,9 @@ public class Utils {
         return tempoLimiteQuestao - (horaAtual - horaInicioQuestao);
     }
 
-    // INICIALIZACÃO
-    public void iniciaJogo() {
-        if (primeiraExecucaoJogo) {
-            banner();
-            primeiraExecucaoJogo = false;
-        }
-
-        mostraMenu();
-    }
-
     // INTERAÇÕES
     public void pressionaTecla() {
-        tocarSom(somTecla, TipoSom.TECLA, false);
+        tocarSom(audioTecla, TipoAudio.TECLA);
     }
 
     public String selecionaOpcao() {
@@ -264,16 +263,22 @@ public class Utils {
         return opcaoSelecionada;
     }
 
-    public void interacao(String acao) {
-        if (acao.equalsIgnoreCase("retornar")) {
+    // Enum para os tipos de interação
+    public enum TipoInteracao {
+        INVALIDA, PROSSEGUIR, RETORNAR
+    }
+
+    public void interacao(TipoInteracao acao) {
+        if (acao == TipoInteracao.RETORNAR) {
             System.out.print("\nPRESSIONE <ENTER> PARA RETORNAR");
-        } else if (acao.equalsIgnoreCase("prosseguir")) {
+        } else if (acao == TipoInteracao.PROSSEGUIR) {
             System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
         } else {
             System.out.print("\nACÃO INVÁLIDA!");
         }
 
         entrada.nextLine();
+        tocarSom(audioTecla, TipoAudio.TECLA);
 
         limpaTerminal();
     }
@@ -346,13 +351,13 @@ public class Utils {
                 Para interagir, basta seguir as instrucoes em tela selecionando a opcao
                 de acordo com o que for apresentado.""");
 
-        interacao("retornar");
+        interacao(TipoInteracao.RETORNAR);
     }
 
     public void jogar() {
-        pararSom(TipoSom.INTRO);
+        pararSom(TipoAudio.INTRO);
         historiaParte1();
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
     }
 
     // TODO: Pensar melhor nos créditos
@@ -375,7 +380,7 @@ public class Utils {
                 Lucas Serafim\r
                 Rafael Batista""");
 
-        interacao("retornar");
+        interacao(TipoInteracao.RETORNAR);
     }
 
     public void status() {
@@ -393,7 +398,7 @@ public class Utils {
         System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
         System.out.println("RESPOSTAS INCORRETAS: " + contadorRespostaIncorreta);
 
-        interacao("retornar");
+        interacao(TipoInteracao.RETORNAR);
     }
 
     public void sair() {
@@ -453,7 +458,7 @@ public class Utils {
         // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
         // Compara a posição da alternativa correta com a posição da resposta do jogador
         if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
-            tocarSom(somRespostaCorreta, TipoSom.RESPOSTA_CORRETA, false);
+            tocarSom(audioRespostaCorreta, TipoAudio.RESPOSTA_CORRETA);
             contadorRespostaCorreta += 1;
             printComDelay("\nRESPOSTA CORRETA!", true, 30, false);
             return true;
@@ -461,7 +466,7 @@ public class Utils {
             printComDelay("\nRESPOSTA INVALIDA!", true, 30, false);
             return false;
         } else {
-            tocarSom(somRespostaIncorreta, TipoSom.RESPOSTA_INCORRETA, false);
+            tocarSom(audioRespostaIncorreta, TipoAudio.RESPOSTA_INCORRETA);
             contadorRespostaIncorreta += 1;
             printComDelay("\nRESPOSTA INCORRETA!", true, 30, false);
             return false;
@@ -483,7 +488,7 @@ public class Utils {
             printComDelay("...", true, 500, false);
 
             // Inicia o cronômetro
-            tocarSom(somRelogio, TipoSom.RELOGIO, true);
+            tocarSom(audioRelogio, TipoAudio.RELOGIO);
             long tempoRestante = tempoLimiteQuestao;
             long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
 
@@ -500,7 +505,7 @@ public class Utils {
                 mostraPergunta(perguntaAtual);
 
                 if (tempoRestante < 1) {
-                    pararSom(TipoSom.RELOGIO);
+                    pararSom(TipoAudio.RELOGIO);
                     limpaTerminal();
                     printComDelay("\nTEMPO ESGOTADO!", true, 30, false);
                 } else {
@@ -509,7 +514,7 @@ public class Utils {
 
                     if (respostaCorreta || tentativas == 1) {
                         if (respostaCorreta) {
-                            pararSom(TipoSom.RELOGIO);
+                            pararSom(TipoAudio.RELOGIO);
                             printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30, false);
                             printComDelay("...", true, 500, false);
                         }
@@ -523,7 +528,7 @@ public class Utils {
         } else {
             printComDelay("\nBANCO DE DADOS ESTAVEL", false, 30, false);
         }
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
     }
 
     // Mostra a pergunta com as alternativas embaralhadas
@@ -534,7 +539,6 @@ public class Utils {
             perguntaAtual.remove(0);
         }
 
-//        printComDelay("AURA: " + enunciado, true, 20, false);
         System.out.println("AURA: " + enunciado);
 
         embaralha(perguntaAtual);
@@ -709,9 +713,13 @@ public class Utils {
     public int mostrarOpcoesPersonagens() {
         System.out.println("\n===== ESCOLHA SEU PERSONAGEM =====");
         System.out.println();
+        pausa(500);
         System.out.println("1 - Arkana Moovit");
+        pausa(500);
         System.out.println("2 - John Reeve");
+        pausa(500);
         System.out.println("3 - Para voltar");
+        pausa(500);
 
         String personagemSelecionado = selecionaOpcao();
 
@@ -724,7 +732,7 @@ public class Utils {
     }
 
     public void iniciarArkanaMoovit() {
-        String funcao = "Especialista em Ecossistemas";
+        String funcao = "Especialista em Ecossistemas\n";
         int estamina = 10;
         int inteligencia = 9;
         int habilidades = 6;
@@ -737,7 +745,7 @@ public class Utils {
 
         mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
 
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
 
         historiaArkanaMoovit();
     }
@@ -747,9 +755,10 @@ public class Utils {
     }
 
     public void iniciarJohnReeves() {
-        String funcao = "Astronauta formado em ciencia da computacao atraves da aeronautica.\nEspecialista em " +
-                "analise" +
-                " de dados e decifragem de padroes extraterrestres";
+        String funcao = """
+                Astronauta formado em ciencia da computacao atraves da aeronautica.
+                Especialista em analise de dados e decifragem de padroes extraterrestres
+                """;
         int estamina = 10;
         int inteligencia = 10;
         int habilidades = 7;
@@ -762,36 +771,40 @@ public class Utils {
 
         mostraAtributosPersonagem(funcao, estamina, inteligencia, habilidades, forca);
 
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
 
         historiaJohnReeves();
     }
 
     public void historiaJohnReeves() {
-        printComDelay("#### Recuperando os Sistemas Internos####", true, 30, false);
+        printComDelay("#### Recuperando os sistemas internos####", true, 30, false);
         pausa(2000);
 
-        printComDelay(" Analise do Banco de Dados e Ligacao entre Sistemas", true, 30, false);
+        printComDelay("Analise do banco de dados e ligacao entre sistemas", true, 30, false);
         pausa(2000);
 
-        printComDelay("Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de " +
-                "navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa." +
-                "\"AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, 30, false);
+        printComDelay("""
+                Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de
+                navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.
+                
+                AURA apresenta uma pergunta para ajudar John a verificar as conexoes:""", true, 30, false);
         pausa(2000);
 
         fazPergunta();
 
-        printComDelay("John responde corretamente, e AURA orienta restaura a ligacao dos dados de navegação. Ele" +
-                " segue as instrucoes para reparar o sistema e continua com os ajustes internos.", true, 30, false);
+        printComDelay("""
+                John responde corretamente, e AURA orienta restaura a ligacao dos dados de navegação.
+                Ele segue as instrucoes para reparar o sistema e continua com os ajustes internos.""", true, 30, false);
         pausa(2000);
 
         printComDelay("####**Verificação das Conexoes de Energia**####", true, 30, false);
         pausa(2000);
 
-        printComDelay("Com o banco de dados de navegacao parcialmente restaurado, John agora precisa verificar o" +
-                " sistema de suporte de vida." +
-                "\" O painel de controle exibe novas pergunta sobre chaves e relacionamentos, que ele deve responder " +
-                "corretamente para prosseguir com o reparo:", true, 30, false);
+        printComDelay("""
+                Com o banco de dados de navegacao parcialmente restaurado, John agora precisa verificar o sistema de suporte de vida.
+                
+                O painel de controle exibe novas pergunta sobre chaves e relacionamentos, que ele deve responder
+                corretamente para prosseguir com o reparo:""", true, 30, false);
         pausa(2000);
 
         fazPergunta();
@@ -801,13 +814,15 @@ public class Utils {
         printComDelay("**Encontro e Jornada Final: Missao em Nahum**", true, 30, false);
         pausa(2000);
 
-        printComDelay("Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo, " +
-                "uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados" +
-                " nos registros, que precisam ser eliminadas antes de pousarem no planeta.*", true, 30, false);
+        printComDelay("""
+                Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo,
+                uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados
+                nos registros, que precisam ser eliminadas antes de pousarem no planeta.*""", true, 30, false);
         pausa(2000);
 
-        printComDelay("**AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se " +
-                "realizar uma altima normalizacao nos dados.*", true, 30, false);
+        printComDelay("""
+                **AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se
+                realizar uma ultima normalizacao nos dados.*""", true, 30, false);
         pausa(2000);
 
         printComDelay("John consulta o painel e é apresentado a uma última pergunta: *", true, 30, false);
@@ -818,10 +833,11 @@ public class Utils {
         printComDelay("**Objetivo Alcançado**", true, 30, false);
         pausa(2000);
 
-        printComDelay("Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria." +
-                " Ao avançarem pela superficie do planeta, percebem que seus esforços e reparos na AETHER foram " +
-                "essenciais para o sucesso da missao," +
-                " prontos para enfrentar o próximo desafio juntos.", true, 30, false);
+        printComDelay("""
+                        Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria.
+                        Ao avançarem pela superficie do planeta, percebem que seus esforços e reparos na AETHER foram essenciais
+                        para o sucesso da missao, prontos para enfrentar o próximo desafio juntos.""", true, 30,
+                false);
         pausa(2000);
     }
 
@@ -835,7 +851,7 @@ public class Utils {
 
         printComDelay("""
                 
-                ======= O ano e 3129.
+                ======= O ano e 3129
                 Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
                 uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
                 desencadeando uma serie de falhas. A voz da IA da nave, AURA, ecoa pela cabine:
@@ -843,7 +859,7 @@ public class Utils {
 
         pausa(500);
 
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
 
         printComDelay("""
                 -Falha detectada em sistemas principais. Requer-se diagnostico e reparo imediato.
@@ -852,7 +868,7 @@ public class Utils {
 
         pausa(500);
 
-        interacao("prosseguir");
+        interacao(TipoInteracao.PROSSEGUIR);
 
         printComDelay("*****Arkana e John trocam um olhar preocupado.*******", true, 30, false);
 
@@ -884,12 +900,13 @@ public class Utils {
         switch (mostrarOpcoesPersonagens()) {
             case 1 -> iniciarArkanaMoovit();
             case 2 -> iniciarJohnReeves();
-            case 3 -> interacao("retornar");
-            default -> interacao("invalido");
+            case 3 -> interacao(TipoInteracao.RETORNAR);
+            default -> interacao(TipoInteracao.INVALIDA);
         }
     }
 
     public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
+        pausa(500);
         System.out.println("Funcao: " + funcao);
         pausa(500);
         System.out.println("Nivel de estamina: " + estamina);
