@@ -123,15 +123,9 @@ public class Utils {
 
     public void tocarSom(String audio, TipoAudio tipo) {
         String audioDiretorioAjustado = ajustaDiretiorio(audio);
-        System.out.println("Caminho do arquivo de áudio ajustado: " + audioDiretorioAjustado);
 
-        try (InputStream caminhoEntrada = getClass().getClassLoader().getResourceAsStream(audioDiretorioAjustado)) {
-            if (caminhoEntrada == null) {
-                throw new RuntimeException("Arquivo de áudio não encontrado: " + audioDiretorioAjustado);
-            }
-
-            BufferedInputStream buffer = new BufferedInputStream(caminhoEntrada);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(buffer);
+        try (InputStream caminhoEntrada = getClass().getResourceAsStream(audioDiretorioAjustado)) {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(caminhoEntrada));
 
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
