@@ -96,11 +96,15 @@ public class Utils {
     }
 
     public String ajustaDiretiorio(String audio) {
+        System.out.println(System.getProperty("os.path"));
+
         String caminhoAjustado = audio;
 
         if (identificaWindows()) {
             caminhoAjustado = audio.replace("/", "\\");
         }
+
+        System.out.println(caminhoAjustado);
 
         return caminhoAjustado;
     }
