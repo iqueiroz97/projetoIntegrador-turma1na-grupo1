@@ -19,6 +19,7 @@ public class Utils {
     // RELACIONADOS A ESTATÍSTICAS
     private int contadorRespostaCorreta;
     private int contadorRespostaIncorreta;
+    private long respostaMaisRapida = 60;
 
     // CONTROLADORES
     private boolean primeiraExecucaoJogo = true;
@@ -234,8 +235,14 @@ public class Utils {
     // TIMER
     public long timer(int tempoLimiteQuestao, long horaInicioQuestao) {
         long horaAtual = System.currentTimeMillis() / 1000L; // Hora atual do sistema
-        // Tempo restante para a questão acabar
+        // Retorna o tempo restante para a questão acabar
         return tempoLimiteQuestao - (horaAtual - horaInicioQuestao);
+    }
+
+    public void respostaMaisRapida(long tempoRestante) {
+        if (tempoRestante < respostaMaisRapida) {
+            respostaMaisRapida = tempoRestante;
+        }
     }
 
     // INTERAÇÕES
@@ -391,6 +398,7 @@ public class Utils {
 
         System.out.println("\nRESPOSTAS CORRETAS: " + contadorRespostaCorreta);
         System.out.println("RESPOSTAS INCORRETAS: " + contadorRespostaIncorreta);
+        System.out.println("RESPOSTA MAIS RAPIDA: " + respostaMaisRapida);
 
         interacao(TipoInteracao.RETORNAR);
     }
@@ -430,7 +438,7 @@ public class Utils {
 
     // VALIDACÃO
     public boolean validaResposta(ArrayList<String> pergunta, String respostaJogador, long tempoRestantePergunta) {
-        // Checa a posiCão da alternativa correta na pergunta atual
+        // Checa a posição da alternativa correta na pergunta atual
         for (String alternativaCorreta : listaAlternativasCorretas()) {
             for (String alternativa : pergunta) {
                 if (alternativa.equals(alternativaCorreta)) {
@@ -449,11 +457,11 @@ public class Utils {
             default -> -1;
         };
 
-        // TODO: Ajustar incremento da variável de resposta incorreta caso o tempo da pergunta tenha acabado
         // Compara a posição da alternativa correta com a posição da resposta do jogador
-        if ((posicaoAlternativaCorreta == posicaoRespostaJogador) && tempoRestantePergunta > 0) {
+        if (posicaoAlternativaCorreta == posicaoRespostaJogador) {
             tocarSom(audioRespostaCorreta, TipoAudio.RESPOSTA_CORRETA);
             contadorRespostaCorreta += 1;
+            respostaMaisRapida(tempoRestantePergunta);
             printComDelay("\nRESPOSTA CORRETA!", true, 30, false);
             return true;
         } else if (posicaoRespostaJogador == -1) {
@@ -471,29 +479,30 @@ public class Utils {
     public void fazPergunta() {
         if (!listaPerguntas().isEmpty()) {
             boolean encerraQuestao = false;
-            int tentativas = 3;
+            int tentativa = 3;
             int tempoLimiteQuestao = 60; // Tempo para o jogador responder uma questão (Em segundos)
 
             System.out.println("\nBANCO DE DADOS INSTAVEL!\n");
             pausa(500);
-            printComDelay("VOCE POSSUI " + tentativas + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
+            printComDelay("VOCE POSSUI " + tentativa + " TENTATIVAS, OU " + tempoLimiteQuestao + " SEGUNDOS PARA " +
                             "RESPONDER A QUESTAO.\nCASO CONTRARIO, UMA PARTICAO DO BANCO DE DADOS IRA CORROMPER", false, 30,
                     false);
             printComDelay("...", true, 500, false);
 
+            limpaTerminal();
+
             // Inicia o cronômetro
-            tocarSom(audioRelogio, TipoAudio.RELOGIO);
             long tempoRestante = tempoLimiteQuestao;
             long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
+            tocarSom(audioRelogio, TipoAudio.RELOGIO);
 
-            while ((tempoRestante > 0 && tentativas > 0) && !encerraQuestao) {
-                tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
-
+            while ((tempoRestante >= 1 || tentativa >= 1) && !encerraQuestao) {
                 boolean respostaCorreta;
                 String respostaJogador;
 
+                tempoRestante = timer(tempoLimiteQuestao, horaInicioQuestao);
                 System.out.println("\nTEMPO RESTANTE: " + tempoRestante);
-                System.out.println("TENTATIVAS RESTANTES: " + tentativas + "\n");
+                System.out.println("TENTATIVAS RESTANTES: " + tentativa + "\n");
 
                 ArrayList<String> perguntaAtual = listaPerguntas().get(0);
                 mostraPergunta(perguntaAtual);
@@ -502,26 +511,35 @@ public class Utils {
                     pararSom(TipoAudio.RELOGIO);
                     limpaTerminal();
                     printComDelay("\nTEMPO ESGOTADO!", true, 30, false);
+                    encerraQuestao = true;
                 } else {
                     respostaJogador = selecionaOpcao();
                     respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
 
-                    if (respostaCorreta || tentativas == 1) {
+                    if (respostaCorreta || tentativa == 1) {
                         if (respostaCorreta) {
-                            pararSom(TipoAudio.RELOGIO);
                             printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, 30, false);
                             printComDelay("...", true, 500, false);
                         }
 
+                        pararSom(TipoAudio.RELOGIO);
                         listaPerguntas().remove(0); // Remove a pergunta atual da lista de perguntas
                         encerraQuestao = true;
+                    } else {
+                        if (tentativa > 1) {
+                            printComDelay("\nTENTE NOVAMENTE!", true, 30, false);
+                        } else {
+                            printComDelay("\nBANCO DE DADOS INSTAVEL", false, 30, false);
+                        }
                     }
                 }
-                tentativas--;
+
+                tentativa--;
             }
         } else {
-            printComDelay("\nBANCO DE DADOS ESTAVEL", false, 30, false);
+            printComDelay("\nBANCO DE DADOS ESTAVEL. SEM NECESSIDADE DE MANUTENCAO", false, 30, false);
         }
+
         interacao(TipoInteracao.PROSSEGUIR);
     }
 
@@ -726,7 +744,7 @@ public class Utils {
     }
 
     public void iniciarArkanaMoovit() {
-        String funcao = "Especialista em Ecossistemas\n";
+        String funcao = "Especialista em Ecossistemas";
         int estamina = 10;
         int inteligencia = 9;
         int habilidades = 6;
@@ -774,7 +792,7 @@ public class Utils {
         printComDelay("#### Recuperando os sistemas internos####", true, 30, false);
         pausa(2000);
 
-        printComDelay("Analise do banco de dados e ligacao entre sistemas", true, 30, false);
+        printComDelay("\nAnalise do banco de dados e ligacao entre sistemas", true, 30, false);
         pausa(2000);
 
         printComDelay("""
@@ -901,7 +919,8 @@ public class Utils {
 
     public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
         pausa(500);
-        System.out.println("Funcao: " + funcao);
+        System.out.print("Funcao: ");
+        printComDelay(funcao, true, 30, false);
         pausa(500);
         System.out.println("Nivel de estamina: " + estamina);
         pausa(500);
