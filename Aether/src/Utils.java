@@ -6,6 +6,7 @@ import javax.sound.sampled.*;
 public class Utils {
     // VARIÁVEIS E OBJETOS
     Scanner entrada = new Scanner(System.in);
+    int personagemEscolhido;
 
     // RELACIONADOS A PERGUNTAS
     private final String[] OPCOES = {"a) ", "b) ", "c) ", "d) ", "e) "};
@@ -263,19 +264,15 @@ public class Utils {
     }
 
     // INTERAÇÕES
-    public void pressionaTecla() {
-        tocarSom(audioTecla, TipoAudio.TECLA);
-    }
-
     public String selecionaOpcao() {
         String opcaoSelecionada;
 
         do {
             System.out.print("\nSELECIONE UMA OPCAO: ");
             opcaoSelecionada = entrada.nextLine().toLowerCase();
-            pressionaTecla();
         } while (opcaoSelecionada.isEmpty());
 
+        tocarSom(audioTecla, TipoAudio.TECLA);
         limpaTerminal();
 
         return opcaoSelecionada;
@@ -292,7 +289,9 @@ public class Utils {
         } else if (acao == TipoInteracao.PROSSEGUIR) {
             System.out.print("\nPRESSIONE <ENTER> PARA PROSSEGUIR");
         } else {
-            System.out.print("\nACÃO INVÁLIDA!");
+            System.out.print("\nOPCAO INVALIDA!\n");
+            pausa(PAUSA_PADRAO);
+            System.out.print("\nPRESSIONE <ENTER> PARA TENTAR NOVAMENTE");
         }
 
         entrada.nextLine();
@@ -377,9 +376,17 @@ public class Utils {
 
     public void jogar() {
         pararSom(TipoAudio.INTRO);
+
         partidaAtiva = true;
+        primeiraExecucaoPartida = true;
+
+        listaPerguntas();
+
         historiaCapitulo1();
-        interacao(TipoInteracao.RETORNAR);
+        interacao(TipoInteracao.PROSSEGUIR);
+
+        status();
+
         partidaAtiva = false;
     }
 
@@ -503,9 +510,10 @@ public class Utils {
 
                 limpaTerminal();
 
-                System.out.println("\nTEMPO ESGOTADO! SUA RESPOSTA NAO FOI COMPUTADA");
+                System.out.println("VOCE NAO RESPONDEU A TEMPO\n");
             } else {
-                printComDelay("\nRESPOSTA INVALIDA!", true, DELAY_TEXTO_PADRAO, false);
+                printComDelay("RESPOSTA INVALIDA!\n", true, DELAY_TEXTO_PADRAO, false);
+                pausa(PAUSA_PADRAO);
             }
 
             return false;
@@ -515,14 +523,19 @@ public class Utils {
 
             contadorRespostaCorreta += 1;
             respostaMaisRapida(tempoRestantePergunta);
-            printComDelay("\nRESPOSTA CORRETA!", true, DELAY_TEXTO_PADRAO, false);
+
+            listaPerguntas().remove(0); // Remove a pergunta atual da lista de perguntas
+
+            printComDelay("RESPOSTA CORRETA!\n", true, DELAY_TEXTO_PADRAO, false);
+            pausa(PAUSA_PADRAO);
 
             return true;
         } else {
             tocarSom(audioRespostaIncorreta, TipoAudio.RESPOSTA_INCORRETA);
 
             contadorRespostaIncorreta += 1;
-            printComDelay("\nRESPOSTA INCORRETA!", true, DELAY_TEXTO_PADRAO, false);
+            printComDelay("RESPOSTA INCORRETA!\n", true, DELAY_TEXTO_PADRAO, false);
+            pausa(PAUSA_PADRAO);
 
             return false;
         }
@@ -541,45 +554,44 @@ public class Utils {
                     false, DELAY_TEXTO_PADRAO, false);
             printComDelay("...", true, DELAY_TEXTO_LENTO, false);
 
-            limpaTerminal();
-
             // Inicia o cronômetro
-            long tempoRestante = TEMPO_LIMITE_QUESTAO;
             long horaInicioQuestao = System.currentTimeMillis() / 1000L; // Horário de início da questão
+            long tempoRestante = timer(TEMPO_LIMITE_QUESTAO, horaInicioQuestao);
             tocarSom(audioRelogio, TipoAudio.RELOGIO);
 
             while ((tempoRestante >= 1 || tentativa >= 1) && !encerraQuestao) {
-                boolean respostaCorreta;
-                String respostaJogador;
+                limpaTerminal();
+
                 ArrayList<String> perguntaAtual = listaPerguntas().get(0);
+
+                System.out.println("TEMPO ATUAL: " + tempoRestante + "s");
+                System.out.println("TENTATIVA ATUAL: " + tentativa);
+
+                mostraPergunta(perguntaAtual);
+                String respostaJogador = selecionaOpcao();
+                boolean respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
 
                 tempoRestante = timer(TEMPO_LIMITE_QUESTAO, horaInicioQuestao);
 
                 if (tempoRestante < 1) {
+                    pararSom(TipoAudio.RELOGIO);
+                    System.out.println("VOCE NAO RESPONDEU A TEMPO");
+
+                    tentativa = 0;
                     encerraQuestao = true;
                 } else {
-                    System.out.println("TEMPO RESTANTE: " + tempoRestante);
-                    System.out.println("TENTATIVAS RESTANTES: " + tentativa);
-
-                    mostraPergunta(perguntaAtual);
-
-                    respostaJogador = selecionaOpcao();
-                    respostaCorreta = validaResposta(perguntaAtual, respostaJogador, tempoRestante);
-
                     if (respostaCorreta || tentativa == 1) {
+                        pararSom(TipoAudio.RELOGIO);
+
                         if (respostaCorreta) {
-                            printComDelay("\nBANCO DE DADOS ESTABILIZADO", false, DELAY_TEXTO_PADRAO, false);
+                            printComDelay("BANCO DE DADOS ESTABILIZADO", false, DELAY_TEXTO_PADRAO, false);
                             printComDelay("...", true, DELAY_TEXTO_LENTO, false);
+                        } else {
+                            printComDelay("BANCO DE DADOS INSTAVEL", true, DELAY_TEXTO_PADRAO, false);
                         }
 
-                        listaPerguntas().remove(0); // Remove a pergunta atual da lista de perguntas
+                        tentativa = 0;
                         encerraQuestao = true;
-                    } else {
-                        if (tentativa > 1) {
-                            printComDelay("\nTENTE NOVAMENTE!\n", true, DELAY_TEXTO_PADRAO, false);
-                        } else {
-                            printComDelay("\nBANCO DE DADOS INSTAVEL", false, DELAY_TEXTO_PADRAO, false);
-                        }
                     }
                 }
 
@@ -770,22 +782,30 @@ public class Utils {
     }
 
     //  SELECÃO DE PESONAGENS
-    public int mostrarOpcoesPersonagens() {
-        System.out.print("""
-                ===== ESCOLHA SEU PERSONAGEM =====\s
-                
-                        (1) Arkana Moovit\s
-                        (2) John Reeves\s
-                """);
-        pausa(PAUSA_PADRAO);
+    public int escolherPersonagem() {
+        int personagemSelecionado = 0;
 
-        String personagemSelecionado = selecionaOpcao();
+        do {
+            System.out.print("""
+                    
+                    ======= ESCOLHA SEU PERSONAGEM =======\s
+                    
+                     (1) Arkana Moovit ou (2) John Reeves\s
+                    """);
 
-        return switch (personagemSelecionado) {
-            case "1" -> 1;
-            case "2" -> 2;
-            default -> -1;
-        };
+            switch (selecionaOpcao()) {
+                case "1":
+                    personagemSelecionado = 1;
+                    break;
+                case "2":
+                    personagemSelecionado = 2;
+                    break;
+                default:
+                    interacao(TipoInteracao.INVALIDA);
+            }
+        } while (personagemSelecionado == 0);
+
+        return personagemSelecionado;
     }
 
     public void iniciarArkanaMoovit() {
@@ -823,6 +843,7 @@ public class Utils {
 
         System.out.println("Voce escolheu John Reeves\n");
         pausa(1000);
+
         printComDelay("Iniciando com John Reeves", false, DELAY_TEXTO_PADRAO, false);
         printComDelay(".....\n", true, DELAY_TEXTO_LENTO, false);
 
@@ -843,9 +864,10 @@ public class Utils {
         printComDelay("""
                 
                 Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de
-                navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.
-                
-                AURA apresenta uma pergunta para ajudar John a verificar as conexoes:""", true, DELAY_TEXTO_PADRAO, false);
+                navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.""", true, DELAY_TEXTO_PADRAO, false);
+        pausa(PAUSA_PADRAO);
+
+        printComDelay("AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, DELAY_TEXTO_PADRAO, false);
         pausa(PAUSA_LENTA);
 
         interacao(TipoInteracao.PROSSEGUIR);
@@ -883,13 +905,13 @@ public class Utils {
                 Com os reparos feitos, Arkana e John se reunem e conseguem seguir para Nahum. Contudo,
                 uma ultima verificacao do sistema mostra que a nave ainda possui redundancias e duplicacoes de dados
                 nos registros, que precisam ser eliminadas antes de pousarem no planeta.*""", true, DELAY_TEXTO_PADRAO, false);
-        pausa(PAUSA_LENTA);
+        pausa(PAUSA_PADRAO);
 
         printComDelay("""
                 
                 **AURA:** “John, para melhorar a eficiencia do sistema e evitar sobrecarga, recomenda-se
                 realizar uma ultima normalizacao nos dados.*""", true, DELAY_TEXTO_PADRAO, false);
-        pausa(PAUSA_LENTA);
+        pausa(PAUSA_PADRAO);
 
         printComDelay("\nJohn consulta o painel e é apresentado a uma última pergunta:", true, DELAY_TEXTO_PADRAO,
                 false);
@@ -899,14 +921,15 @@ public class Utils {
         fazPergunta();
 
         printComDelay("** OBJETIVO ALCANCADO **", true, DELAY_TEXTO_PADRAO, false);
-        pausa(PAUSA_LENTA);
+        pausa(PAUSA_PADRAO);
 
         printComDelay("""
+                        
                         Com o pouso em Nahum, Arkana e John finalmente podem se concentrar na coleta da planta Sansevieria.
                         Ao avançarem pela superficie do planeta, percebem que seus esforços e reparos na AETHER foram essenciais
                         para o sucesso da missao, prontos para enfrentar o próximo desafio juntos.""", true, DELAY_TEXTO_PADRAO,
                 false);
-        pausa(PAUSA_LENTA);
+        pausa(PAUSA_PADRAO);
     }
 
     public void historiaCapitulo1() {
@@ -916,9 +939,10 @@ public class Utils {
         printComDelay("EMERGENCIA NA NAVE AETHER", false, DELAY_TEXTO_PADRAO, false);
         printComDelay(".....", true, DELAY_TEXTO_LENTO, false);
 
+        printComDelay("\n======= O ano e 3129", true, DELAY_TEXTO_PADRAO, false);
+        pausa(PAUSA_PADRAO);
+
         printComDelay("""
-                
-                ======= O ano e 3129
                 
                 Arkana Moovit e John Reeves estao a caminho de Nahum na nave AETHER com a missao de coletar
                 uma amostra da planta SANSEVIERIA. Durante a viagem, porem, um subito problema atinge os sistemas da nave,
@@ -941,13 +965,13 @@ public class Utils {
 
         printComDelay("""
                 
-                -Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
+                - Eu vou cuidar da parte externa, John! Faca os reparos necessarios aqui dentro.
                 ****Disse Arkana""", true, DELAY_TEXTO_PADRAO, false);
         pausa(PAUSA_PADRAO);
 
         printComDelay("""
                 
-                -Pode deixar, eu dou conta!
+                - Pode deixar, eu dou conta!
                 *****Disse John""", true, DELAY_TEXTO_PADRAO, false);
         pausa(PAUSA_PADRAO);
 
@@ -957,24 +981,15 @@ public class Utils {
                         enquanto John trabalha nos sistemas internos.
                         Eles escolhem suas respectivas funcoes e comecam suas jornadas individuais de reparo.""",
                 true, DELAY_TEXTO_PADRAO, false);
-        pausa(PAUSA_PADRAO);
+        pausa(PAUSA_LENTA);
 
-        boolean escolhaPersonagem = false;
+        personagemEscolhido = escolherPersonagem();
 
-        do {
-            switch (mostrarOpcoesPersonagens()) {
-                case 1:
-                    escolhaPersonagem = true;
-                    iniciarArkanaMoovit();
-                    break;
-                case 2:
-                    escolhaPersonagem = true;
-                    iniciarJohnReeves();
-                    break;
-                default:
-                    interacao(TipoInteracao.INVALIDA);
-            }
-        } while (!escolhaPersonagem);
+        if (personagemEscolhido == 1) {
+            iniciarArkanaMoovit();
+        } else {
+            iniciarJohnReeves();
+        }
     }
 
     public void mostraAtributosPersonagem(String funcao, int estamina, int inteligencia, int habilidades, int forca) {
