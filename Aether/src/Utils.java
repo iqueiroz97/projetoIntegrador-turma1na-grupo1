@@ -660,7 +660,7 @@ public class Utils {
                 uma entidade?
                 """;
 
-        // O enunciado inicialmente entra na posiCão zero do array
+        // O enunciado inicialmente entra na posição zero do array
         alternativas.add(enunciadoPergunta);
 
         String alternativa1 = "Relacionamento Um-para-Um (1:1)";
@@ -668,7 +668,7 @@ public class Utils {
         String alternativa3 = "Relacionamento Muitos-para-Muitos (N:N)";
         String alternativa4 = "Relacionamento Circular";
 
-        // A alternativa correta inicialmente entra na posiCão cinco do array
+        // A alternativa correta inicialmente entra na posição cinco do array
         alternativaCorretaPergunta1 = "Relacionamento Um-para-Muitos (1:N)";
 
         alternativas.add(alternativa1);
@@ -864,7 +864,8 @@ public class Utils {
         printComDelay("""
                 
                 Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de
-                navegação, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.""", true, DELAY_TEXTO_PADRAO, false);
+                navegacao, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.""", true,
+                DELAY_TEXTO_PADRAO, false);
         pausa(PAUSA_PADRAO);
 
         printComDelay("AURA apresenta uma pergunta para ajudar John a verificar as conexoes:", true, DELAY_TEXTO_PADRAO, false);
@@ -874,7 +875,7 @@ public class Utils {
         fazPergunta();
 
         printComDelay("""
-                        Gracas a resposta de John, AURA restaura a ligacao dos dados de navegação.
+                        Gracas a resposta de John, AURA restaura a ligacao dos dados de navegacao.
                         Ele segue as instrucoes para reparar o sistema e continua com os ajustes internos.""", true, DELAY_TEXTO_PADRAO,
                 false);
         pausa(PAUSA_LENTA);
