@@ -390,7 +390,6 @@ public class Utils {
         partidaAtiva = false;
     }
 
-    // TODO: Pensar melhor nos créditos
     public void creditos() {
         printComDelay("""
                 
@@ -790,7 +789,7 @@ public class Utils {
                     
                     ======= ESCOLHA SEU PERSONAGEM =======\s
                     
-                     (1) Arkana Moovit ou (2) John Reeves\s
+                     (1) John Reeves ou (2) Arkana Moovit\s
                     """);
 
             switch (selecionaOpcao()) {
@@ -809,7 +808,7 @@ public class Utils {
     }
 
     public void iniciarArkanaMoovit() {
-        String funcao = "Especialista em Ecossistemas";
+        String funcao = "Especialista em Ecossistemas\n";
         int estamina = 10;
         int inteligencia = 9;
         int habilidades = 6;
@@ -862,9 +861,9 @@ public class Utils {
         pausa(PAUSA_LENTA);
 
         printComDelay("""
-                
-                Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de
-                navegacao, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.""", true,
+                        
+                        Dentro da nave, John acessa o painel de controle e descobre um problema com os bancos de dados de
+                        navegacao, onde as tabelas precisam ser interligadas para retomar a funcionalidade completa.""", true,
                 DELAY_TEXTO_PADRAO, false);
         pausa(PAUSA_PADRAO);
 
@@ -987,9 +986,9 @@ public class Utils {
         personagemEscolhido = escolherPersonagem();
 
         if (personagemEscolhido == 1) {
-            iniciarArkanaMoovit();
-        } else {
             iniciarJohnReeves();
+        } else {
+            iniciarArkanaMoovit();
         }
     }
 
